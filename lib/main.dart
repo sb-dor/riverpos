@@ -1,24 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-void main() {
-  runApp(const App());
-}
+import 'package:flutter/widgets.dart';
+import 'package:riverpos/initialization/logic/initialization.dart';
+import 'package:riverpos/initialization/widgets/app.dart';
 
-/// {@template main}
-/// App widget.
-/// {@endtemplate}
-class App extends StatefulWidget {
-  /// {@macro main}
-  const App({
-    super.key, // ignore: unused_element_parameter
-  });
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-/// State for widget App.
-class _AppState extends State<App> {
-  @override
-  Widget build(BuildContext context) => const Placeholder();
-}
+void main() => runZonedGuarded(() async {
+  try {
+    final dependencies = await initialize();
+    runApp(App(dependencies: dependencies));
+  } on InitializationStepException catch (error, stackTrace) {
+    // run ErrorApp
+  }
+}, (error, stackTrace) {});
