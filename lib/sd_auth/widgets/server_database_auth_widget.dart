@@ -24,7 +24,9 @@ class _ServerDatabaseAuthWidgetState
   void initState() {
     super.initState();
     // Initial state initialization
-    ref.read(serverDatabaseProvider.notifier).load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(serverDatabaseProvider.notifier).load();
+    });
   }
 
   @override
@@ -42,7 +44,13 @@ class _ServerDatabaseAuthWidgetState
       body: CustomScrollView(
         slivers: [
           if (serverDatabaseState.inInProgress)
-            CircularProgressIndicator.adaptive(backgroundColor: Colors.red),
+            SliverToBoxAdapter(
+              child: Center(
+                child: CircularProgressIndicator.adaptive(
+                  backgroundColor: Colors.red,
+                ),
+              ),
+            ),
         ],
       ),
     );

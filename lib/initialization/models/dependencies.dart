@@ -2,7 +2,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final dependenciesProvider = Provider<DependenciesContainer>((ref) {
-  return DependenciesContainer();
+  throw StateError('dependenciesProvider was not overridden');
 });
 
 class DependenciesContainer {

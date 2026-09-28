@@ -58,11 +58,10 @@ class ServerDatabaseProvider extends Notifier<ServerDatabaseState> {
       if (state.inInProgress) return;
       state = state.copyWith(inInProgress: true);
       await Future.delayed(const Duration(seconds: 1));
-      final serverDatabase = await serverDatabaseRepository
-          .localServerDatabase();
+      // final serverDatabase = await serverDatabaseRepository
+      //     .localServerDatabase();
       state = state.copyWith(
         inInProgress: false,
-        serverDatabase: () => serverDatabase,
       );
     } finally {
       state = state.copyWith(inInProgress: false);
