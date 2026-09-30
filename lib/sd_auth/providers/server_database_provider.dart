@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/data/server_database_repository.dart';
@@ -16,55 +15,65 @@ final serverDatabaseProvider =
       ServerDatabaseProvider.new,
     );
 
-class ServerDatabaseState {
-  ServerDatabaseState({this.inInProgress = false, this.serverDatabase});
+sealed class ServerDatabaseState {
+  const ServerDatabaseState();
 
-  bool inInProgress;
-  ServerDatabase? serverDatabase;
+  const factory ServerDatabaseState.initial() = ServerDatabase$InitialState;
 
-  @override
-  int get hashCode => inInProgress.hashCode ^ serverDatabase.hashCode;
+  const factory ServerDatabaseState.inProgress() =
+      ServerDatabase$InProgressState;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ServerDatabaseState &&
-          inInProgress == other.inInProgress &&
-          serverDatabase == other.serverDatabase;
+  const factory ServerDatabaseState.error({Object? error}) =
+      ServerDatabase$ErrorState;
 
-  ServerDatabaseState copyWith({
-    bool? inInProgress,
-    ValueGetter<ServerDatabase?>? serverDatabase,
-  }) {
-    return ServerDatabaseState(
-      inInProgress: inInProgress ?? this.inInProgress,
-      serverDatabase: serverDatabase != null
-          ? serverDatabase()
-          : this.serverDatabase,
-    );
-  }
+  const factory ServerDatabaseState.completed(ServerDatabase? serverDatabase) =
+      ServerDatabase$CompletedState;
+}
+
+final class ServerDatabase$InitialState extends ServerDatabaseState {
+  const ServerDatabase$InitialState();
+}
+
+final class ServerDatabase$InProgressState extends ServerDatabaseState {
+  const ServerDatabase$InProgressState();
+}
+
+final class ServerDatabase$ErrorState extends ServerDatabaseState {
+  const ServerDatabase$ErrorState({this.error});
+
+  final Object? error;
+}
+
+final class ServerDatabase$CompletedState extends ServerDatabaseState {
+  const ServerDatabase$CompletedState(this.serverDatabase);
+
+  final ServerDatabase? serverDatabase;
 }
 
 class ServerDatabaseProvider extends Notifier<ServerDatabaseState> {
   @override
-  ServerDatabaseState build() => ServerDatabaseState();
+  ServerDatabaseState build() => ServerDatabaseState.initial();
 
   void load() async {
-    final serverDatabaseRepository = ref.read(
-      sdAuthenticationRepositoryProvider,
-    );
-
     try {
-      if (state.inInProgress) return;
-      state = state.copyWith(inInProgress: true);
-      await Future.delayed(const Duration(seconds: 1));
-      // final serverDatabase = await serverDatabaseRepository
-      //     .localServerDatabase();
-      state = state.copyWith(
-        inInProgress: false,
+      if (state is ServerDatabase$InProgressState) return;
+
+      state = ServerDatabaseState.inProgress();
+
+      /// бля
+      final serverDatabaseRepository = ref.read(
+        sdAuthenticationRepositoryProvider,
       );
-    } finally {
-      state = state.copyWith(inInProgress: false);
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      final serverDatabase = await serverDatabaseRepository
+          .localServerDatabase();
+      //
+      state = ServerDatabaseState.completed(serverDatabase);
+    } catch (error, stackTrace) {
+      state = ServerDatabaseState.error(error: error);
+      throw Error.throwWithStackTrace(error, stackTrace);
     }
   }
 }

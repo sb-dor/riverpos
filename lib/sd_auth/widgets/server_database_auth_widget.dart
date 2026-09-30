@@ -19,10 +19,25 @@ class ServerDatabaseAuthWidget extends ConsumerStatefulWidget {
 /// State for widget ServerDatabaseAuthWidget.
 class _ServerDatabaseAuthWidgetState
     extends ConsumerState<ServerDatabaseAuthWidget> {
+  final serverCode = TextEditingController();
+  late final controllers = [serverCode];
+
+  // --- form-level state
+  final _validation = ValueNotifier<bool>(false);
+  final _error = ValueNotifier<String?>(null);
+
+  // --- The merged Listeners ---
+  late final Listenable formController;
+
   /* #region Lifecycle */
   @override
   void initState() {
     super.initState();
+
+    formController = Listenable.merge(controllers);
+    formController.addListener(_onFormChanged);
+
+    _onFormChanged();
     // Initial state initialization
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(serverDatabaseProvider.notifier).load();
@@ -32,9 +47,37 @@ class _ServerDatabaseAuthWidgetState
   @override
   void dispose() {
     // Permanent removal of a tree stent
+    formController.removeListener(_onFormChanged);
+
+    controllers.whereType<ChangeNotifier>().forEach(
+      (listenable) => listenable.dispose(),
+    );
+
+    _validation.dispose();
+
+    _error.dispose();
+
     super.dispose();
   }
   /* #endregion */
+
+  void _onFormChanged() {
+    final text = serverCode.text.trim();
+    if (text.length != 8) {
+      _validation.value = false;
+      _error.value = 'Length error';
+      return;
+    }
+
+    if (int.tryParse(text) == null) {
+      _validation.value = false;
+      _error.value = 'Type error';
+      return;
+    }
+
+    _validation.value = true;
+    _error.value = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +86,50 @@ class _ServerDatabaseAuthWidgetState
       appBar: AppBar(title: Text('Server database auth')),
       body: CustomScrollView(
         slivers: [
-          if (serverDatabaseState.inInProgress)
-            SliverToBoxAdapter(
+          switch (serverDatabaseState) {
+            ServerDatabase$InitialState() => SliverToBoxAdapter(
+              child: SizedBox.shrink(),
+            ),
+            ServerDatabase$InProgressState() => SliverFillRemaining(
               child: Center(
                 child: CircularProgressIndicator.adaptive(
                   backgroundColor: Colors.red,
                 ),
               ),
             ),
+            ServerDatabase$ErrorState() => SliverFillRemaining(
+              child: Center(child: Text('Error state')),
+            ),
+            ServerDatabase$CompletedState() => SliverFillRemaining(
+              child: Column(
+                crossAxisAlignment: .center,
+                mainAxisAlignment: .center,
+                children: [
+                  TextField(controller: serverCode),
+
+                  ListenableBuilder(
+                    listenable: _validation,
+                    builder: (context, child) {
+                      return TextButton(
+                        onPressed: _validation.value ? () {} : null,
+                        child: Text('Submit'),
+                      );
+                    },
+                  ),
+
+                  ListenableBuilder(
+                    listenable: _error,
+                    builder: (context, child) {
+                      if (_error.value != null) {
+                        return Text(_error.value!);
+                      }
+                      return SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          },
         ],
       ),
     );
