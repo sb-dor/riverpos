@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:riverpos/_core/api_client.dart';
+import 'package:riverpos/_core/config.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +12,8 @@ class InitializationStepException implements Exception {
 
 Future<DependenciesContainer> initialize() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  /// you could use global created variable here from dependencies.dart file:
   final dependencies = DependenciesContainer();
   final steps = await _initializeDependencies();
   for (final step in steps.entries) {
@@ -32,5 +36,12 @@ Future<InitializationStep> _initializeDependencies() async {
   return {
     'sharedPreferencesInitialization': (dependencies) async =>
         dependencies.sharedPreferences = await SharedPreferences.getInstance(),
+    'apiClientInitialization': (dependencies) async =>
+        dependencies.apiClient = ApiClient(
+          baseUrl: Config.apiAdminBaseUrl,
+          apiClientHeaders: ApiClientHeaders(
+            sharedPreferences: dependencies.sharedPreferences,
+          ),
+        ),
   };
 }

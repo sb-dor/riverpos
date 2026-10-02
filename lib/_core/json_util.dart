@@ -20,12 +20,14 @@ sealed class JsonUtil {
   /// Extracts a value from [json] and casts it to [DateTime].
   /// [String] - [DateTime] format: `yyyy-MM-ddTHH:mm:ss.SSSZ`
   /// [int] - [DateTime] format: seconds since epoch
-  static DateTime? extractDateTimeOrNull(Map<String, Object?> json, String key) =>
-      switch (json[key]) {
-        String value => DateTime.tryParse(value),
-        int value => DateTime.fromMillisecondsSinceEpoch(value * 1000),
-        _ => null,
-      };
+  static DateTime? extractDateTimeOrNull(
+    Map<String, Object?> json,
+    String key,
+  ) => switch (json[key]) {
+    String value => DateTime.tryParse(value),
+    int value => DateTime.fromMillisecondsSinceEpoch(value * 1000),
+    _ => null,
+  };
 
   static Map<String, Object?>? jsonDecode(String source) =>
       converter.jsonDecode(source) as Map<String, Object?>?;
@@ -33,7 +35,8 @@ sealed class JsonUtil {
 
 extension JsonUtilX on Map<String, Object?> {
   /// Extracts a value from [this] and casts it to [T].
-  T extract<T>(String key, [T? fallback]) => JsonUtil.extract<T>(this, key, fallback);
+  T extract<T>(String key, [T? fallback]) =>
+      JsonUtil.extract<T>(this, key, fallback);
 
   /// Extracts a value from [this] and casts it to [T].
   /// Returns `null` if the value is not of type [T].
@@ -42,5 +45,6 @@ extension JsonUtilX on Map<String, Object?> {
   /// Extracts a value from [this] and casts it to [DateTime].
   /// [String] - [DateTime] format: `yyyy-MM-ddTHH:mm:ss.SSSZ`
   /// [int] - [DateTime] format: seconds since epoch
-  DateTime? extractDateTimeOrNull(String key) => JsonUtil.extractDateTimeOrNull(this, key);
+  DateTime? extractDateTimeOrNull(String key) =>
+      JsonUtil.extractDateTimeOrNull(this, key);
 }

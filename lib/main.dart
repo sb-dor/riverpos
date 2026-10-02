@@ -8,7 +8,7 @@ void main() => runZonedGuarded(() async {
   try {
     final dependencies = await initialize();
     runApp(App(dependencies: dependencies));
-  } on InitializationStepException catch (error, stackTrace) {
+  } on InitializationStepException {
     // run ErrorApp
   }
 }, (error, stackTrace) {});
