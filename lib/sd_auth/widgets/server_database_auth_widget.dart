@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpos/auth/widgets/auth_widget.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 
 /// {@template server_database_auth_widget}
@@ -82,6 +83,18 @@ class _ServerDatabaseAuthWidgetState
   @override
   Widget build(BuildContext context) {
     final serverDatabaseState = ref.watch(serverDatabaseProvider);
+
+    /// блять/бля/бла
+    ref.listen(serverDatabaseProvider, (prev, current) {
+      if (current is ServerDatabase$CompletedState &&
+          current.serverDatabase != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AuthWidget()),
+        );
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(title: Text('Server database auth')),
       body: CustomScrollView(
@@ -97,8 +110,20 @@ class _ServerDatabaseAuthWidgetState
                 ),
               ),
             ),
-            ServerDatabase$ErrorState() => SliverFillRemaining(
-              child: Center(child: Text('Error state')),
+            ServerDatabase$ErrorState(:final error) => SliverFillRemaining(
+              child: Column(
+                mainAxisAlignment: .center,
+                crossAxisAlignment: .center,
+                children: [
+                  Text('Error: $error'),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(serverDatabaseProvider.notifier).load();
+                    },
+                    child: Text('Reset'),
+                  ),
+                ],
+              ),
             ),
             ServerDatabase$CompletedState() => SliverFillRemaining(
               child: Column(
@@ -111,7 +136,21 @@ class _ServerDatabaseAuthWidgetState
                     listenable: _validation,
                     builder: (context, child) {
                       return TextButton(
-                        onPressed: _validation.value ? () {} : null,
+                        onPressed: _validation.value
+                            ? () {
+                                ref
+                                    .read(serverDatabaseProvider.notifier)
+                                    .remoteServerDatabase(
+                                      uid: serverCode.text.trim(),
+                                      onMessage: (message) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                              SnackBar(content: Text(message)),
+                                            );
+                                      },
+                                    );
+                              }
+                            : null,
                         child: Text('Submit'),
                       );
                     },

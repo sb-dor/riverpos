@@ -3,6 +3,7 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/data/server_database_repository.dart';
 import 'package:riverpos/sd_auth/models/server_database.dart';
 
+/// I could create this globally with no riverpod's provider
 final sdAuthenticationRepositoryProvider =
     Provider<ISDAuthenticationRepository>((ref) {
       return SDAuthenticationRepositoryImpl(
@@ -52,7 +53,10 @@ final class ServerDatabase$CompletedState extends ServerDatabaseState {
 
 class ServerDatabaseProvider extends Notifier<ServerDatabaseState> {
   @override
-  ServerDatabaseState build() => ServerDatabaseState.initial();
+  ServerDatabaseState build() {
+    // ref.keepAlive();
+    return ServerDatabaseState.initial();
+  }
 
   void load() async {
     try {
@@ -60,7 +64,7 @@ class ServerDatabaseProvider extends Notifier<ServerDatabaseState> {
 
       state = ServerDatabaseState.inProgress();
 
-      /// бля
+      /// блять/бля/бла
       final serverDatabaseRepository = ref.read(
         sdAuthenticationRepositoryProvider,
       );
@@ -76,4 +80,31 @@ class ServerDatabaseProvider extends Notifier<ServerDatabaseState> {
       throw Error.throwWithStackTrace(error, stackTrace);
     }
   }
+
+  void remoteServerDatabase({
+    required String uid,
+    required void Function(String message) onMessage,
+  }) async {
+    try {
+      if (state is ServerDatabase$InProgressState) return;
+
+      state = ServerDatabaseState.inProgress();
+
+      /// блять/бля/бла
+      final serverDatabaseRepository = ref.read(
+        sdAuthenticationRepositoryProvider,
+      );
+
+      final serverDatabase = await serverDatabaseRepository.serverDatabase(
+        uid: uid,
+        onMessage: onMessage,
+      );
+      //
+      state = ServerDatabaseState.completed(serverDatabase);
+    } catch (error) {
+      state = ServerDatabaseState.error(error: error);
+    }
+  }
+
+  void resetState() async => state = ServerDatabaseState.initial();
 }
