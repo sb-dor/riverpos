@@ -4,7 +4,7 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/products/data/products_repository.dart';
 import 'package:riverpos/products/models/product.dart';
 
-/// I could create this globally with no riverpod's provider
+/// I could create this globally with no riverpod's provider (simple global variable)
 final productsProvider = NotifierProvider<ProductsProvider, ProductsState>(ProductsProvider.new);
 
 final productsRepositoryImpl = Provider((ref) {

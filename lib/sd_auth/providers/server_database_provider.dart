@@ -3,7 +3,7 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/data/server_database_repository.dart';
 import 'package:riverpos/sd_auth/models/server_database.dart';
 
-/// I could create this globally with no riverpod's provider
+/// I could create this globally with no riverpod's provider (simple global variable)
 final sdAuthenticationRepositoryProvider = Provider<ISDAuthenticationRepository>((ref) {
   return SDAuthenticationRepositoryImpl(sharedPreferences: ref.read(dependenciesProvider).sharedPreferences);
 });
