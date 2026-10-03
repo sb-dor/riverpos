@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpos/auth/providers/auth_provider.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
+import 'package:riverpos/products/providers/products_provider.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 import 'package:riverpos/sd_auth/widgets/server_database_auth_widget.dart';
 
@@ -29,6 +30,7 @@ class _AppState extends State<App> {
       dependenciesProvider.overrideWithValue(widget.dependencies),
       serverDatabaseProvider,
       authProvider,
+      productsProvider,
     ],
     child: MaterialApp(home: ServerDatabaseAuthWidget()),
   );
