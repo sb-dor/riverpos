@@ -1,4 +1,5 @@
 {
     "ENVIRONMENT": "production",
-    "API_ADMIN_URL": "https://"
+    "API_ADMIN_URL": "https://",
+    "DATABASE_NAME": ""
 }

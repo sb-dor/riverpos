@@ -1,5 +1,6 @@
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpos/_core/api_client.dart';
+import 'package:riverpos/_core/database/app_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// I could create this as simple global variable... But since I had to understrand "shittedspot" (riverpod)
@@ -15,6 +16,8 @@ final dependenciesProvider = Provider<DependenciesContainer>((ref) {
 /// and fully initiating this varilable above in initialization.dart file
 
 class DependenciesContainer {
+  late final AppDatabase appDatabase;
+
   late final SharedPreferences sharedPreferences;
 
   late final IApiClient apiClient;
