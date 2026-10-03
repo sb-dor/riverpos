@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpos/auth/providers/auth_provider.dart';
-import 'package:riverpos/cart/widgets/cart_widget.dart';
+import 'package:riverpos/orders/widgets/orders_scope.dart';
 
 /// {@template auth_widget}
 /// AuthWidget widget.
@@ -44,9 +44,7 @@ class _AuthWidgetState extends ConsumerState<AuthWidget> {
   void dispose() {
     formController.removeListener(_onFormChanged);
 
-    controllers.whereType<ChangeNotifier>().forEach(
-      (listenable) => listenable.dispose(),
-    );
+    controllers.whereType<ChangeNotifier>().forEach((listenable) => listenable.dispose());
 
     _validation.dispose();
     _error.dispose();
@@ -87,10 +85,7 @@ class _AuthWidgetState extends ConsumerState<AuthWidget> {
     //
     ref.listen(authProvider, (prev, current) {
       if (current is AuthenticatedState) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => CartWidget()),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrdersScope()));
       }
     });
 
@@ -127,10 +122,7 @@ class _AuthWidgetState extends ConsumerState<AuthWidget> {
                                     email: email.text.trim(),
                                     password: password.text.trim(),
                                     onMessage: (message) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                            SnackBar(content: Text(message)),
-                                          );
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
                                     },
                                   );
                             }
