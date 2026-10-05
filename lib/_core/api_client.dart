@@ -9,10 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'json_util.dart';
 
 abstract interface class IApiClient {
-  Future<Map<String, Object?>> get(
-    String url, {
-    Map<String, String>? queryParameters,
-  });
+  Future<Map<String, Object?>> get(String url, {Map<String, String>? queryParameters});
 
   Future<Map<String, Object?>> post(String url, {Map<String, Object?>? body});
 }
@@ -36,9 +33,7 @@ class ApiClientHeaders implements IApiClientHeaders {
 
     final localSD = _sharedPreferences.getString('local_sd');
     if (localSD != null) {
-      final serverDatabase = ServerDatabase.fromJson(
-        JsonUtil.jsonDecode(localSD)!,
-      );
+      final serverDatabase = ServerDatabase.fromJson(JsonUtil.jsonDecode(localSD)!);
       headers['X-Store-Db'] = serverDatabase.databaseName;
     }
 
@@ -55,33 +50,23 @@ class ApiClientHeaders implements IApiClientHeaders {
   }
 }
 
-bool isSuccessStatusCode(int statusCode) =>
-    statusCode >= 200 && statusCode < 300;
+bool isSuccessStatusCode(int statusCode) => statusCode >= 200 && statusCode < 300;
 
 class ApiClient implements IApiClient {
-  ApiClient({
-    required this.baseUrl,
-    http.Client? client,
-    required this._apiClientHeaders,
-  }) : _client = client ?? http.Client();
+  ApiClient({required this.baseUrl, http.Client? client, required this._apiClientHeaders})
+    : _client = client ?? http.Client();
 
   final String baseUrl;
   final http.Client _client;
   final IApiClientHeaders _apiClientHeaders;
 
   @override
-  Future<Map<String, Object?>> get(
-    String url, {
-    Map<String, String>? queryParameters,
-  }) async {
-    String completedUrl = url;
+  Future<Map<String, Object?>> get(String url, {Map<String, String>? queryParameters}) async {
+    String completedUrl = '$baseUrl$url';
     final completedQueryParams = _getQueryParams(queryParameters);
     if (completedQueryParams != null) completedUrl += completedQueryParams;
     final headers = await _apiClientHeaders.headers();
-    final response = await _client.get(
-      Uri.parse(completedUrl),
-      headers: headers,
-    );
+    final response = await _client.get(Uri.parse(completedUrl), headers: headers);
 
     final converted = jsonDecode(response.body) as Map<String, Object?>;
 
@@ -94,15 +79,11 @@ class ApiClient implements IApiClient {
     Map<String, Object?>? body,
     Map<String, String>? queryParameters,
   }) async {
-    String completedUrl = url;
+    String completedUrl = '$baseUrl$url';
     final completedQueryParams = _getQueryParams(queryParameters);
     if (completedQueryParams != null) completedUrl += completedQueryParams;
     final headers = await _apiClientHeaders.headers();
-    final response = await _client.post(
-      Uri.parse(completedUrl),
-      body: body,
-      headers: headers,
-    );
+    final response = await _client.post(Uri.parse(completedUrl), body: body, headers: headers);
 
     final converted = jsonDecode(response.body) as Map<String, Object?>;
 
@@ -126,11 +107,7 @@ class ApiClient implements IApiClient {
 
 @immutable
 sealed class APIClientException implements Exception {
-  const APIClientException({
-    this.serverCode,
-    this.serverError,
-    this.serverMessage,
-  });
+  const APIClientException({this.serverCode, this.serverError, this.serverMessage});
 
   /// HTTP status code.
   /// If the request was not sent, this will be 0.
