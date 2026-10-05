@@ -7,7 +7,7 @@ import 'package:riverpos/products/models/product.dart';
 /// I could create this globally with no riverpod's provider (simple global variable)
 final productsProvider = NotifierProvider<ProductsProvider, ProductsState>(ProductsProvider.new);
 
-final productsRepositoryImpl = Provider((ref) {
+final productsRepositoryImpl = Provider<IProductsRepository>((ref) {
   final dependencies = ref.read(dependenciesProvider);
   return ProductsRepositoryImpl(apiClient: dependencies.apiClient);
 });
@@ -55,6 +55,8 @@ class ProductsProvider extends Notifier<ProductsState> {
     try {
       if (state is Products$InProgressState) return;
 
+      state = ProductsState.inProgress();
+
       /// блять/бля/бла
       /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
       final productsRepository = ref.read(productsRepositoryImpl);
@@ -65,7 +67,30 @@ class ProductsProvider extends Notifier<ProductsState> {
 
       final page = localPaginationUtil.checkIsListHasMorePageInt(list: products, page: 1);
 
-      final hasMore = localPaginationUtil.checkIsListHasMorePageBool(list: products);
+      final hasMore = localPaginationUtil.checkIsListHasMorePageBool(list: products, limitInPage: 20);
+
+      state = ProductsState.completed(products: products, page: page, hasMore: hasMore);
+    } catch (error) {
+      state = ProductsState.error(error: error);
+    }
+  }
+
+  void paginate() async {
+    try {
+      if (state is! Products$CompletedState) return;
+      final completedState = state as Products$CompletedState;
+
+      /// блять/бля/бла
+      /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
+      final productsRepository = ref.read(productsRepositoryImpl);
+
+      final localPaginationUtil = ref.read(localPaginationUtilProvider);
+
+      final products = await productsRepository.products(page: completedState.page, perPage: 20);
+
+      final page = localPaginationUtil.checkIsListHasMorePageInt(list: products, page: completedState.page);
+
+      final hasMore = localPaginationUtil.checkIsListHasMorePageBool(list: products, limitInPage: 20);
 
       state = ProductsState.completed(products: products, page: page, hasMore: hasMore);
     } catch (error) {

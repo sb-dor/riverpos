@@ -19,7 +19,7 @@ class ProductsRepositoryImpl implements IProductsRepository {
     );
 
     if (response['status'] == true) {
-      final dProducts = response['data'] as List<Object>? ?? <Object>[];
+      final dProducts = response['data'] as List<Object?>? ?? <Object>[];
       return dProducts.map((json) => Product.fromJson(json as Map<String, Object?>)).toList();
     }
 
