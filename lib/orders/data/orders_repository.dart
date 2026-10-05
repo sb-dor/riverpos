@@ -17,7 +17,7 @@ class OrdersRepositoryImpl implements IOrdersRepository {
   Future<List<Order>> orders({required int page, required int perPage}) async {
     final offset = (page - 1) * perPage;
 
-    final ordersQ = await (_appDatabase.select(_appDatabase.tempOrdersTable)..limit(offset)).get();
+    final ordersQ = await (_appDatabase.select(_appDatabase.tempOrdersTable)..limit(perPage, offset: offset)).get();
 
     final List<Order> orders = [];
 
