@@ -6,4 +6,6 @@ class Cart {
   Cart({Order? order}) : order = order ?? Order(uid: const Uuid().v4(), orderItems: <OrderItem>[]);
 
   final Order order;
+
+  Cart copyWith({Order? order}) => Cart(order: order ?? this.order);
 }
