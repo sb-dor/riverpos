@@ -21,23 +21,32 @@ Future<DependenciesContainer> initialize() async {
     try {
       await step.value(dependencies);
     } catch (error, stackTrace) {
-      throw Error.throwWithStackTrace(InitializationStepException(error), stackTrace);
+      throw Error.throwWithStackTrace(
+        InitializationStepException(error),
+        stackTrace,
+      );
     }
   }
   return dependencies;
 }
 
-typedef InitializationStep = Map<String, Future<void> Function(DependenciesContainer dependencies)>;
+typedef InitializationStep =
+    Map<String, Future<void> Function(DependenciesContainer dependencies)>;
 
 Future<InitializationStep> _initializeDependencies() async {
   return {
     'appDatabaseInitialization': (dependencies) async =>
-        dependencies.appDatabase = AppDatabase.defaults(name: Config.databaseName),
+        dependencies.appDatabase = AppDatabase.defaults(
+          name: Config.databaseName,
+        ),
     'sharedPreferencesInitialization': (dependencies) async =>
         dependencies.sharedPreferences = await SharedPreferences.getInstance(),
-    'apiClientInitialization': (dependencies) async => dependencies.apiClient = ApiClient(
-      baseUrl: Config.apiAdminBaseUrl,
-      apiClientHeaders: ApiClientHeaders(sharedPreferences: dependencies.sharedPreferences),
-    ),
+    'apiClientInitialization': (dependencies) async =>
+        dependencies.apiClient = ApiClient(
+          baseUrl: Config.apiAdminBaseUrl,
+          apiClientHeaders: ApiClientHeaders(
+            sharedPreferences: dependencies.sharedPreferences,
+          ),
+        ),
   };
 }

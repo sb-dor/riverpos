@@ -5,6 +5,8 @@ import 'package:drift/drift.dart';
 class TempOrderItemsTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 
+  TextColumn get uid => text().nullable()();
+
   IntColumn get orderId => integer().nullable()();
 
   IntColumn get productId => integer().nullable()();

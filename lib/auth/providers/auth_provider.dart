@@ -5,16 +5,21 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 
 /// I could create this globally with no riverpod's provider (simple global variable)
+/// but Even if I could access the global variable, I would still be violating the rules of dependency injection.
+/// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
 final authRepositoryImplProvider = Provider<IAuthenticationRepository>((ref) {
   final dependencies = ref.read(dependenciesProvider);
-  final sdCompletedState = ref.read(serverDatabaseProvider) as ServerDatabase$CompletedState;
+  final sdCompletedState =
+      ref.read(serverDatabaseProvider) as ServerDatabase$CompletedState;
   return AuthRepositoryImpl(
     sharedPreferences: dependencies.sharedPreferences,
     api: () => sdCompletedState.serverDatabase?.backendApi ?? '',
   );
 });
 
-final authProvider = NotifierProvider<AuthProvider, AuthState>(AuthProvider.new);
+final authProvider = NotifierProvider<AuthProvider, AuthState>(
+  AuthProvider.new,
+);
 
 sealed class AuthState {
   const AuthState();
@@ -25,7 +30,8 @@ sealed class AuthState {
 
   const factory AuthState.error({Object? error}) = Auth$ErrorState;
 
-  const factory AuthState.completed({required Identity identity}) = AuthenticatedState;
+  const factory AuthState.completed({required Identity identity}) =
+      AuthenticatedState;
 
   User? get user => switch (this) {
     AuthenticatedState(:final identity) => identity as User,
@@ -66,10 +72,15 @@ class AuthProvider extends Notifier<AuthState> {
       if (state is Auth$InProgressState) return;
 
       /// блять/бля/бла
+      /// Even if I could access the global variable, I would still be violating the rules of dependency injection.
       /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
       final authRepositoryImpl = ref.read(authRepositoryImplProvider);
 
-      final user = await authRepositoryImpl.signIn(email: email, password: password, onMessage: onMessage);
+      final user = await authRepositoryImpl.signIn(
+        email: email,
+        password: password,
+        onMessage: onMessage,
+      );
 
       if (user == null) {
         state = AuthState.initial();

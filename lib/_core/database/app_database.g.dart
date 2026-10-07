@@ -272,6 +272,15 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  static const VerificationMeta _uidMeta = const VerificationMeta('uid');
+  @override
+  late final GeneratedColumn<String> uid = GeneratedColumn<String>(
+    'uid',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _orderIdMeta = const VerificationMeta(
     'orderId',
   );
@@ -326,6 +335,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    uid,
     orderId,
     productId,
     productName,
@@ -346,6 +356,12 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('uid')) {
+      context.handle(
+        _uidMeta,
+        uid.isAcceptableOrUnknown(data['uid']!, _uidMeta),
+      );
     }
     if (data.containsKey('order_id')) {
       context.handle(
@@ -396,6 +412,10 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      uid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uid'],
+      ),
       orderId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}order_id'],
@@ -428,6 +448,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
 class TempOrderItemsTableData extends DataClass
     implements Insertable<TempOrderItemsTableData> {
   final int id;
+  final String? uid;
   final int? orderId;
   final int? productId;
   final String? productName;
@@ -435,6 +456,7 @@ class TempOrderItemsTableData extends DataClass
   final double? qty;
   const TempOrderItemsTableData({
     required this.id,
+    this.uid,
     this.orderId,
     this.productId,
     this.productName,
@@ -445,6 +467,9 @@ class TempOrderItemsTableData extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    if (!nullToAbsent || uid != null) {
+      map['uid'] = Variable<String>(uid);
+    }
     if (!nullToAbsent || orderId != null) {
       map['order_id'] = Variable<int>(orderId);
     }
@@ -466,6 +491,7 @@ class TempOrderItemsTableData extends DataClass
   TempOrderItemsTableCompanion toCompanion(bool nullToAbsent) {
     return TempOrderItemsTableCompanion(
       id: Value(id),
+      uid: uid == null && nullToAbsent ? const Value.absent() : Value(uid),
       orderId: orderId == null && nullToAbsent
           ? const Value.absent()
           : Value(orderId),
@@ -489,6 +515,7 @@ class TempOrderItemsTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TempOrderItemsTableData(
       id: serializer.fromJson<int>(json['id']),
+      uid: serializer.fromJson<String?>(json['uid']),
       orderId: serializer.fromJson<int?>(json['orderId']),
       productId: serializer.fromJson<int?>(json['productId']),
       productName: serializer.fromJson<String?>(json['productName']),
@@ -501,6 +528,7 @@ class TempOrderItemsTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'uid': serializer.toJson<String?>(uid),
       'orderId': serializer.toJson<int?>(orderId),
       'productId': serializer.toJson<int?>(productId),
       'productName': serializer.toJson<String?>(productName),
@@ -511,6 +539,7 @@ class TempOrderItemsTableData extends DataClass
 
   TempOrderItemsTableData copyWith({
     int? id,
+    Value<String?> uid = const Value.absent(),
     Value<int?> orderId = const Value.absent(),
     Value<int?> productId = const Value.absent(),
     Value<String?> productName = const Value.absent(),
@@ -518,6 +547,7 @@ class TempOrderItemsTableData extends DataClass
     Value<double?> qty = const Value.absent(),
   }) => TempOrderItemsTableData(
     id: id ?? this.id,
+    uid: uid.present ? uid.value : this.uid,
     orderId: orderId.present ? orderId.value : this.orderId,
     productId: productId.present ? productId.value : this.productId,
     productName: productName.present ? productName.value : this.productName,
@@ -527,6 +557,7 @@ class TempOrderItemsTableData extends DataClass
   TempOrderItemsTableData copyWithCompanion(TempOrderItemsTableCompanion data) {
     return TempOrderItemsTableData(
       id: data.id.present ? data.id.value : this.id,
+      uid: data.uid.present ? data.uid.value : this.uid,
       orderId: data.orderId.present ? data.orderId.value : this.orderId,
       productId: data.productId.present ? data.productId.value : this.productId,
       productName: data.productName.present
@@ -541,6 +572,7 @@ class TempOrderItemsTableData extends DataClass
   String toString() {
     return (StringBuffer('TempOrderItemsTableData(')
           ..write('id: $id, ')
+          ..write('uid: $uid, ')
           ..write('orderId: $orderId, ')
           ..write('productId: $productId, ')
           ..write('productName: $productName, ')
@@ -552,12 +584,13 @@ class TempOrderItemsTableData extends DataClass
 
   @override
   int get hashCode =>
-      Object.hash(id, orderId, productId, productName, price, qty);
+      Object.hash(id, uid, orderId, productId, productName, price, qty);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TempOrderItemsTableData &&
           other.id == this.id &&
+          other.uid == this.uid &&
           other.orderId == this.orderId &&
           other.productId == this.productId &&
           other.productName == this.productName &&
@@ -568,6 +601,7 @@ class TempOrderItemsTableData extends DataClass
 class TempOrderItemsTableCompanion
     extends UpdateCompanion<TempOrderItemsTableData> {
   final Value<int> id;
+  final Value<String?> uid;
   final Value<int?> orderId;
   final Value<int?> productId;
   final Value<String?> productName;
@@ -575,6 +609,7 @@ class TempOrderItemsTableCompanion
   final Value<double?> qty;
   const TempOrderItemsTableCompanion({
     this.id = const Value.absent(),
+    this.uid = const Value.absent(),
     this.orderId = const Value.absent(),
     this.productId = const Value.absent(),
     this.productName = const Value.absent(),
@@ -583,6 +618,7 @@ class TempOrderItemsTableCompanion
   });
   TempOrderItemsTableCompanion.insert({
     this.id = const Value.absent(),
+    this.uid = const Value.absent(),
     this.orderId = const Value.absent(),
     this.productId = const Value.absent(),
     this.productName = const Value.absent(),
@@ -591,6 +627,7 @@ class TempOrderItemsTableCompanion
   });
   static Insertable<TempOrderItemsTableData> custom({
     Expression<int>? id,
+    Expression<String>? uid,
     Expression<int>? orderId,
     Expression<int>? productId,
     Expression<String>? productName,
@@ -599,6 +636,7 @@ class TempOrderItemsTableCompanion
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (uid != null) 'uid': uid,
       if (orderId != null) 'order_id': orderId,
       if (productId != null) 'product_id': productId,
       if (productName != null) 'product_name': productName,
@@ -609,6 +647,7 @@ class TempOrderItemsTableCompanion
 
   TempOrderItemsTableCompanion copyWith({
     Value<int>? id,
+    Value<String?>? uid,
     Value<int?>? orderId,
     Value<int?>? productId,
     Value<String?>? productName,
@@ -617,6 +656,7 @@ class TempOrderItemsTableCompanion
   }) {
     return TempOrderItemsTableCompanion(
       id: id ?? this.id,
+      uid: uid ?? this.uid,
       orderId: orderId ?? this.orderId,
       productId: productId ?? this.productId,
       productName: productName ?? this.productName,
@@ -630,6 +670,9 @@ class TempOrderItemsTableCompanion
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (uid.present) {
+      map['uid'] = Variable<String>(uid.value);
     }
     if (orderId.present) {
       map['order_id'] = Variable<int>(orderId.value);
@@ -653,6 +696,7 @@ class TempOrderItemsTableCompanion
   String toString() {
     return (StringBuffer('TempOrderItemsTableCompanion(')
           ..write('id: $id, ')
+          ..write('uid: $uid, ')
           ..write('orderId: $orderId, ')
           ..write('productId: $productId, ')
           ..write('productName: $productName, ')
@@ -856,6 +900,7 @@ typedef $$TempOrdersTableTableProcessedTableManager =
 typedef $$TempOrderItemsTableTableCreateCompanionBuilder =
     TempOrderItemsTableCompanion Function({
       Value<int> id,
+      Value<String?> uid,
       Value<int?> orderId,
       Value<int?> productId,
       Value<String?> productName,
@@ -865,6 +910,7 @@ typedef $$TempOrderItemsTableTableCreateCompanionBuilder =
 typedef $$TempOrderItemsTableTableUpdateCompanionBuilder =
     TempOrderItemsTableCompanion Function({
       Value<int> id,
+      Value<String?> uid,
       Value<int?> orderId,
       Value<int?> productId,
       Value<String?> productName,
@@ -883,6 +929,11 @@ class $$TempOrderItemsTableTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get uid => $composableBuilder(
+    column: $table.uid,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -926,6 +977,11 @@ class $$TempOrderItemsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get uid => $composableBuilder(
+    column: $table.uid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get orderId => $composableBuilder(
     column: $table.orderId,
     builder: (column) => ColumnOrderings(column),
@@ -963,6 +1019,9 @@ class $$TempOrderItemsTableTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get uid =>
+      $composableBuilder(column: $table.uid, builder: (column) => column);
 
   GeneratedColumn<int> get orderId =>
       $composableBuilder(column: $table.orderId, builder: (column) => column);
@@ -1026,6 +1085,7 @@ class $$TempOrderItemsTableTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String?> uid = const Value.absent(),
                 Value<int?> orderId = const Value.absent(),
                 Value<int?> productId = const Value.absent(),
                 Value<String?> productName = const Value.absent(),
@@ -1033,6 +1093,7 @@ class $$TempOrderItemsTableTableTableManager
                 Value<double?> qty = const Value.absent(),
               }) => TempOrderItemsTableCompanion(
                 id: id,
+                uid: uid,
                 orderId: orderId,
                 productId: productId,
                 productName: productName,
@@ -1042,6 +1103,7 @@ class $$TempOrderItemsTableTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String?> uid = const Value.absent(),
                 Value<int?> orderId = const Value.absent(),
                 Value<int?> productId = const Value.absent(),
                 Value<String?> productName = const Value.absent(),
@@ -1049,6 +1111,7 @@ class $$TempOrderItemsTableTableTableManager
                 Value<double?> qty = const Value.absent(),
               }) => TempOrderItemsTableCompanion.insert(
                 id: id,
+                uid: uid,
                 orderId: orderId,
                 productId: productId,
                 productName: productName,

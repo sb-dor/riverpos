@@ -12,15 +12,23 @@ class ProductsRepositoryImpl implements IProductsRepository {
   final String _products = '/product';
 
   @override
-  Future<List<Product>> products({required int page, required int perPage}) async {
+  Future<List<Product>> products({
+    required int page,
+    required int perPage,
+  }) async {
     final response = await _apiClient.get(
       _products,
-      queryParameters: {'page': page.toString(), 'per_page': perPage.toString()},
+      queryParameters: {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      },
     );
 
     if (response['status'] == true) {
       final dProducts = response['data'] as List<Object?>? ?? <Object>[];
-      return dProducts.map((json) => Product.fromJson(json as Map<String, Object?>)).toList();
+      return dProducts
+          .map((json) => Product.fromJson(json as Map<String, Object?>))
+          .toList();
     }
 
     throw Exception("Couldn't get products due to a server error: $response");

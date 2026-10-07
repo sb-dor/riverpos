@@ -17,7 +17,9 @@ class OrdersRepositoryImpl implements IOrdersRepository {
   Future<List<Order>> orders({required int page, required int perPage}) async {
     final offset = (page - 1) * perPage;
 
-    final ordersQ = await (_appDatabase.select(_appDatabase.tempOrdersTable)..limit(perPage, offset: offset)).get();
+    final ordersQ = await (_appDatabase.select(
+      _appDatabase.tempOrdersTable,
+    )..limit(perPage, offset: offset)).get();
 
     final List<Order> orders = [];
 
@@ -29,8 +31,12 @@ class OrdersRepositoryImpl implements IOrdersRepository {
       final orderItems = orderItemsQ
           .map(
             (el) => OrderItem(
-              uid: const Uuid().v4(),
-              product: Product(id: el.productId!, name: el.productName!, price: el.price ?? 0),
+              uid: item.uuid ?? Uuid().v4(),
+              product: Product(
+                id: el.productId!,
+                name: el.productName!,
+                price: el.price ?? 0,
+              ),
               price: el.price ?? 0,
               qty: el.qty ?? 0,
             ),

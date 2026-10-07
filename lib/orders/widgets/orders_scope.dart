@@ -19,5 +19,6 @@ class OrdersScope extends StatefulWidget {
 /// State for widget OrdersScope.
 class _OrdersScopeState extends State<OrdersScope> {
   @override
-  Widget build(BuildContext context) => ProviderScope(overrides: [ordersProvider], child: OrdersWidget());
+  Widget build(BuildContext context) =>
+      ProviderScope(overrides: [ordersProvider], child: OrdersWidget());
 }

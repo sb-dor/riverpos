@@ -21,7 +21,10 @@ class AppDatabase extends _$AppDatabase {
           native: const DriftNativeOptions(shareAcrossIsolates: true),
           // Update the sqlite3Wasm and driftWorker paths to match the location of the files in your project if needed.
           // https://drift.simonbinder.eu/web/#prerequisites
-          web: DriftWebOptions(sqlite3Wasm: Uri.parse('sqlite3.wasm'), driftWorker: Uri.parse('drift_worker.js')),
+          web: DriftWebOptions(
+            sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+            driftWorker: Uri.parse('drift_worker.js'),
+          ),
         ),
       );
 
