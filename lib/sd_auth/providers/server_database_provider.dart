@@ -4,7 +4,7 @@ import 'package:riverpos/sd_auth/data/server_database_repository.dart';
 import 'package:riverpos/sd_auth/models/server_database.dart';
 
 final serverDatabaseProvider = StateNotifierProvider<ServerDatabaseProvider, ServerDatabaseState>(
-  (ref) => ServerDatabaseProvider(
+  (_) => ServerDatabaseProvider(
     sdAuthenticationRepository: SDAuthenticationRepositoryImpl(
       sharedPreferences: dependencies.sharedPreferences,
     ),

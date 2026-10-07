@@ -4,7 +4,7 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/products/data/products_repository.dart';
 import 'package:riverpos/products/models/product.dart';
 
-final productsProvider = StateNotifierProvider<ProductsProvider, ProductsState>((ref) {
+final productsProvider = StateNotifierProvider<ProductsProvider, ProductsState>((_) {
   return ProductsProvider(
     productsRepository: ProductsRepositoryImpl(apiClient: dependencies.apiClient),
     localPaginationUtil: localPaginationUtil,

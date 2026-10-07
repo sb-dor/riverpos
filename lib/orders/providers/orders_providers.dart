@@ -4,7 +4,7 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/orders/data/orders_repository.dart';
 import 'package:riverpos/orders/models/order.dart';
 
-final ordersProvider = StateNotifierProvider<OrdersProvider, OrdersState>((ref) {
+final ordersProvider = StateNotifierProvider<OrdersProvider, OrdersState>((_) {
   return OrdersProvider(
     ordersRepository: OrdersRepositoryImpl(appDatabase: dependencies.appDatabase),
     localPaginationUtil: localPaginationUtil,

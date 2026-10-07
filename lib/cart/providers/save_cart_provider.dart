@@ -3,7 +3,7 @@ import 'package:riverpos/cart/data/cart_repository.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/orders/models/order.dart';
 
-final saveCartProvider = StateNotifierProvider<SaveCartProvider, SaveCartState>((ref) {
+final saveCartProvider = StateNotifierProvider<SaveCartProvider, SaveCartState>((_) {
   return SaveCartProvider(
     cartRepository: Cart$LocalRepositoryImpl(appDatabase: dependencies.appDatabase),
   );
