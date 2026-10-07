@@ -1,17 +1,7 @@
 import 'package:riverpod/legacy.dart';
 import 'package:riverpos/_core/local_pagination_util.dart';
-import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/orders/data/orders_repository.dart';
 import 'package:riverpos/orders/models/order.dart';
-
-final ordersProvider = StateNotifierProvider<OrdersProvider, OrdersState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
-  final localPaginationUtil = ref.read(localPaginationUtilProvider);
-  return OrdersProvider(
-    ordersRepository: OrdersRepositoryImpl(appDatabase: dependencies.appDatabase),
-    localPaginationUtil: localPaginationUtil,
-  );
-});
 
 sealed class OrdersState {
   const OrdersState();

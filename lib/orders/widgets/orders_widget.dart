@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpos/auth/providers/auth_provider.dart';
 import 'package:riverpos/cart/widgets/cart_scope.dart';
 import 'package:riverpos/orders/providers/orders_providers.dart';
+import 'package:riverpos/orders/widgets/orders_scope.dart';
 
 /// {@template orders_widget}
 /// OrdersWidget widget.
@@ -19,6 +20,8 @@ class OrdersWidget extends ConsumerStatefulWidget {
 
 /// State for widget OrdersWidget.
 class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
+  late final _scope = OrdersScope.of(context);
+  late final _ordersProvider = _scope.ordersProvider;
   final ScrollController _scrollController = ScrollController();
 
   /* #region Lifecycle */
@@ -28,7 +31,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
     _scrollController.addListener(_scrollListener);
     // Initial state initialization
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(ordersProvider.notifier).load();
+      ref.read(_ordersProvider.notifier).load();
     });
   }
 
@@ -43,32 +46,27 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
   /* #endregion */
 
   void _scrollListener() {
-    if (_scrollController.offset ==
-        _scrollController.position.maxScrollExtent) {
-      ref.read(ordersProvider.notifier).paginate();
+    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
+      ref.read(_ordersProvider.notifier).paginate();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final authProviderState = ref.watch(authProvider);
-    final ordersProviderState = ref.watch(ordersProvider);
+    final ordersProviderState = ref.watch(_ordersProvider);
     // final counterAlert = ref.watch(counterAlertProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Orders screen')),
       body: RefreshIndicator.adaptive(
         onRefresh: () async {
-          ref.read(ordersProvider.notifier).load();
+          ref.read(_ordersProvider.notifier).load();
         },
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           controller: _scrollController,
           slivers: [
-            SliverToBoxAdapter(
-              child: Text(
-                "Signed in: ${authProviderState.user?.fullName ?? '-'}",
-              ),
-            ),
+            SliverToBoxAdapter(child: Text("Signed in: ${authProviderState.user?.fullName ?? '-'}")),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -79,7 +77,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
                       MaterialPageRoute(
                         builder: (context) => CartScope(
                           onSuccessfullySave: () {
-                            ref.read(ordersProvider.notifier).load();
+                            ref.read(_ordersProvider.notifier).load();
                           },
                         ),
                       ),
@@ -93,10 +91,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
                       child: Center(
                         child: Text(
                           "Add order",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: .w700,
-                          ),
+                          style: TextStyle(color: Colors.white, fontWeight: .w700),
                         ),
                       ),
                     ),
@@ -105,20 +100,13 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
               ),
             ),
             switch (ordersProviderState) {
-              Orders$InitialState() => SliverToBoxAdapter(
-                child: SizedBox.shrink(),
-              ),
+              Orders$InitialState() => SliverToBoxAdapter(child: SizedBox.shrink()),
               Orders$InProgressState() => SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator.adaptive()),
               ),
-              Orders$ErrorState(:final error) => SliverFillRemaining(
-                child: Text(error.toString()),
-              ),
+              Orders$ErrorState(:final error) => SliverFillRemaining(child: Text(error.toString())),
               Orders$CompletedState(:final orders) => SliverGrid.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 100,
-                  crossAxisCount: 3,
-                ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(mainAxisExtent: 100, crossAxisCount: 3),
                 itemCount: orders.length,
                 itemBuilder: (context, index) {
                   final order = orders[index];
@@ -130,15 +118,13 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
                           builder: (context) => CartScope(
                             order: order,
                             onSuccessfullySave: () {
-                              ref.read(ordersProvider.notifier).load();
+                              ref.read(_ordersProvider.notifier).load();
                             },
                           ),
                         ),
                       );
                     },
-                    child: Card(
-                      child: Center(child: Text('Order: ${index + 1}')),
-                    ),
+                    child: Card(child: Center(child: Text('Order: ${index + 1}'))),
                   );
                 },
               ),
@@ -157,11 +143,8 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
             //     ],
             //   ),
             // ),
-            if (ordersProviderState is Orders$CompletedState &&
-                ordersProviderState.hasMore)
-              SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              ),
+            if (ordersProviderState is Orders$CompletedState && ordersProviderState.hasMore)
+              SliverToBoxAdapter(child: Center(child: CircularProgressIndicator.adaptive())),
           ],
         ),
       ),

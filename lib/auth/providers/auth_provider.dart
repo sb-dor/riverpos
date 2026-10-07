@@ -5,7 +5,6 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 
 final authProvider = StateNotifierProvider<AuthProvider, AuthState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
   final sdCompletedState = ref.read(serverDatabaseProvider) as ServerDatabase$CompletedState;
   return AuthProvider(
     authenticationRepository: AuthRepositoryImpl(

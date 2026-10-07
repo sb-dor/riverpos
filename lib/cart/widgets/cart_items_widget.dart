@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpos/cart/models/cart.dart';
 import 'package:riverpos/cart/providers/cart_provider.dart';
 
 /// {@template cart_items_widget}
@@ -9,7 +10,10 @@ class CartItemsWidget extends ConsumerStatefulWidget {
   /// {@macro cart_items_widget}
   const CartItemsWidget({
     super.key, // ignore: unused_element_parameter
+    required this.cartProvider,
   });
+
+  final NotifierProvider<CartProvider, Cart> cartProvider;
 
   @override
   ConsumerState<CartItemsWidget> createState() => _CartItemsWidgetState();
@@ -33,7 +37,7 @@ class _CartItemsWidgetState extends ConsumerState<CartItemsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final cartProviderState = ref.watch(cartProvider);
+    final cartProviderState = ref.watch(widget.cartProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Cart items')),
       body: SafeArea(
@@ -47,33 +51,20 @@ class _CartItemsWidgetState extends ConsumerState<CartItemsWidget> {
                   margin: EdgeInsets.all(10),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 25,
-                        child: ColoredBox(color: Colors.green),
-                      ),
+                      CircleAvatar(radius: 25, child: ColoredBox(color: Colors.green)),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: .start,
                           crossAxisAlignment: .start,
                           children: [
-                            Text(
-                              item.product.name,
-                              style: TextStyle(fontWeight: .bold),
-                            ),
+                            Text(item.product.name, style: TextStyle(fontWeight: .bold)),
                             Text(item.price.toString()),
                           ],
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.remove),
-                        color: Colors.red,
-                      ),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.remove), color: Colors.red),
 
-                      Text(
-                        item.qty.toString(),
-                        style: TextStyle(fontWeight: .bold),
-                      ),
+                      Text(item.qty.toString(), style: TextStyle(fontWeight: .bold)),
 
                       IconButton(
                         onPressed: () {},

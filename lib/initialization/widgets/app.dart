@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpos/auth/providers/auth_provider.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
-import 'package:riverpos/products/providers/products_provider.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 import 'package:riverpos/sd_auth/widgets/server_database_auth_widget.dart';
 
@@ -26,12 +25,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) => ProviderScope(
-    overrides: [
-      dependenciesProvider.overrideWithValue(widget.dependencies),
-      serverDatabaseProvider,
-      authProvider,
-      productsProvider,
-    ],
+    overrides: [serverDatabaseProvider, authProvider],
     child: MaterialApp(home: ServerDatabaseAuthWidget()),
   );
 }

@@ -5,11 +5,6 @@ import 'package:riverpos/orders/models/order_item.dart';
 import 'package:riverpos/products/models/product.dart';
 import 'package:uuid/uuid.dart';
 
-/// I could create this globally with no riverpod's provider (simple global variable)
-/// but Even if I could access the global variable, I would still be violating the rules of dependency injection.
-/// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-final cartProvider = NotifierProvider<CartProvider, Cart>(CartProvider.new);
-
 class CartProvider extends Notifier<Cart> {
   @override
   Cart build() => Cart();

@@ -1,17 +1,7 @@
 import 'package:riverpod/legacy.dart';
 import 'package:riverpos/_core/local_pagination_util.dart';
-import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/products/data/products_repository.dart';
 import 'package:riverpos/products/models/product.dart';
-
-final productsProvider = StateNotifierProvider<ProductsProvider, ProductsState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
-  final localizationUtil = ref.read(localPaginationUtilProvider);
-  return ProductsProvider(
-    productsRepository: ProductsRepositoryImpl(apiClient: dependencies.apiClient),
-    localPaginationUtil: localizationUtil,
-  );
-});
 
 sealed class ProductsState {
   const ProductsState();

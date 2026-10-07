@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpos/auth/providers/auth_provider.dart';
-import 'package:riverpos/cart/providers/cart_provider.dart';
 import 'package:riverpos/cart/providers/save_cart_provider.dart';
 import 'package:riverpos/cart/widgets/cart_items_widget.dart';
 import 'package:riverpos/cart/widgets/cart_scope.dart';
@@ -24,6 +23,9 @@ class CartWidget extends ConsumerStatefulWidget {
 /// State for widget CartWidget.
 class _CartWidgetState extends ConsumerState<CartWidget> {
   late final _scope = CartScope.of(context);
+  late final _cartProvider = _scope.cartProvider;
+  late final _saveCartProvider = _scope.saveCartProvider;
+  late final _productsProvider = _scope.productsProvider;
   late final _onSuccessfullySave = _scope.onSuccessfullyChange;
 
   final ScrollController _scrollController = ScrollController();
@@ -35,8 +37,8 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
     // Initial state initialization
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(cartProvider.notifier).loadOrder(_scope.order);
-      ref.read(productsProvider.notifier).load();
+      ref.read(_cartProvider.notifier).loadOrder(_scope.order);
+      ref.read(_productsProvider.notifier).load();
 
       _scrollController.addListener(_scrollListener);
     });
@@ -53,19 +55,18 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
   /* #endregion */
 
   void _scrollListener() {
-    if (_scrollController.offset ==
-        _scrollController.position.maxScrollExtent) {
-      ref.read(productsProvider.notifier).paginate();
+    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
+      ref.read(_productsProvider.notifier).paginate();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final authProviderState = ref.watch(authProvider);
-    final productsProviderState = ref.watch(productsProvider);
-    final cartProviderState = ref.watch(cartProvider);
+    final productsProviderState = ref.watch(_productsProvider);
+    final cartProviderState = ref.watch(_cartProvider);
 
-    ref.listen(saveCartProvider, (prev, current) {
+    ref.listen(_saveCartProvider, (prev, current) {
       if (current is SaveCart$CompletedState) {
         _onSuccessfullySave.call();
         Navigator.pop(context);
@@ -90,7 +91,7 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
                   MaterialPageRoute(
                     builder: (context) => UncontrolledProviderScope(
                       container: scopeContainer,
-                      child: CartItemsWidget(),
+                      child: CartItemsWidget(cartProvider: _cartProvider),
                     ),
                   ),
                 );
@@ -108,70 +109,49 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: Text(
-                      "Signed in: ${authProviderState.user?.fullName ?? '-'}",
-                    ),
-                  ),
+                  SliverToBoxAdapter(child: Text("Signed in: ${authProviderState.user?.fullName ?? '-'}")),
                   switch (productsProviderState) {
-                    Products$InitialState() => SliverToBoxAdapter(
-                      child: SizedBox.shrink(),
-                    ),
+                    Products$InitialState() => SliverToBoxAdapter(child: SizedBox.shrink()),
                     Products$InProgressState() => SliverFillRemaining(
-                      child: Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
+                      child: Center(child: CircularProgressIndicator.adaptive()),
                     ),
                     Products$ErrorState(:final error) => SliverFillRemaining(
                       child: Center(child: Text(error.toString())),
                     ),
-                    Products$CompletedState(:final products) =>
-                      SliverList.separated(
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-                          return Card(
-                            margin: EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  child: ColoredBox(color: Colors.green),
+                    Products$CompletedState(:final products) => SliverList.separated(
+                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return Card(
+                          margin: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              CircleAvatar(radius: 25, child: ColoredBox(color: Colors.green)),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: .start,
+                                  crossAxisAlignment: .start,
+                                  children: [
+                                    Text(product.name, style: TextStyle(fontWeight: .bold)),
+                                    Text(product.price.toString()),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: .start,
-                                    crossAxisAlignment: .start,
-                                    children: [
-                                      Text(
-                                        product.name,
-                                        style: TextStyle(fontWeight: .bold),
-                                      ),
-                                      Text(product.price.toString()),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    ref
-                                        .read(cartProvider.notifier)
-                                        .addProduct(product);
-                                  },
-                                  icon: Icon(Icons.add),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                  },
-                  if (productsProviderState is Products$CompletedState &&
-                      productsProviderState.hasMore)
-                    SliverToBoxAdapter(
-                      child: CircularProgressIndicator.adaptive(),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  ref.read(_cartProvider.notifier).addProduct(product);
+                                },
+                                icon: Icon(Icons.add),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
+                  },
+                  if (productsProviderState is Products$CompletedState && productsProviderState.hasMore)
+                    SliverToBoxAdapter(child: CircularProgressIndicator.adaptive()),
                 ],
               ),
             ),
@@ -184,9 +164,7 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
                   child: ElevatedButton(
                     style: ButtonStyle(backgroundColor: .all(Colors.green)),
                     onPressed: () {
-                      ref
-                          .read(saveCartProvider.notifier)
-                          .save(cartProviderState.order);
+                      ref.read(_saveCartProvider.notifier).save(cartProviderState.order);
                     },
                     child: Text('save'),
                   ),

@@ -1,12 +1,6 @@
 import 'package:riverpod/legacy.dart';
 import 'package:riverpos/cart/data/cart_repository.dart';
-import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/orders/models/order.dart';
-
-final saveCartProvider = StateNotifierProvider<SaveCartProvider, SaveCartState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
-  return SaveCartProvider(cartRepository: Cart$LocalRepositoryImpl(appDatabase: dependencies.appDatabase));
-});
 
 sealed class SaveCartState {
   const SaveCartState();
