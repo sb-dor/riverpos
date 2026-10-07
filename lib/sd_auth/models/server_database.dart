@@ -78,9 +78,7 @@ class ServerDatabase {
     return ServerDatabase(
       id: id ?? this.id,
       uid: uid != null ? uid() : this.uid,
-      warehouseName: warehouseName != null
-          ? warehouseName()
-          : this.warehouseName,
+      warehouseName: warehouseName != null ? warehouseName() : this.warehouseName,
       limitStore: limitStore != null ? limitStore() : this.limitStore,
       databaseName: databaseName ?? this.databaseName,
       backendApi: backendApi ?? this.backendApi,

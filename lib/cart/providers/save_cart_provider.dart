@@ -4,8 +4,9 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/orders/models/order.dart';
 
 final saveCartProvider = StateNotifierProvider<SaveCartProvider, SaveCartState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
-  return SaveCartProvider(cartRepository: Cart$LocalRepositoryImpl(appDatabase: dependencies.appDatabase));
+  return SaveCartProvider(
+    cartRepository: Cart$LocalRepositoryImpl(appDatabase: dependencies.appDatabase),
+  );
 });
 
 sealed class SaveCartState {
@@ -39,7 +40,8 @@ class SaveCart$CompletedState extends SaveCartState {
 }
 
 class SaveCartProvider extends StateNotifier<SaveCartState> {
-  SaveCartProvider({required this._cartRepository, SaveCartState? state}) : super(state ?? SaveCartState.initial());
+  SaveCartProvider({required this._cartRepository, SaveCartState? state})
+    : super(state ?? SaveCartState.initial());
 
   final ICartRepository _cartRepository;
 

@@ -18,9 +18,7 @@ class CartScope extends ConsumerStatefulWidget {
   });
 
   static CartScopeState of(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<_CartScopeInhWidget>()
-        ?.widget;
+    final widget = context.getElementForInheritedWidgetOfExactType<_CartScopeInhWidget>()?.widget;
     assert(widget != null, 'No _CartScopeInhWidget was found in element tree');
     return (widget as _CartScopeInhWidget).state;
   }

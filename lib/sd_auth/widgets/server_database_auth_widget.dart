@@ -13,13 +13,11 @@ class ServerDatabaseAuthWidget extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _ServerDatabaseAuthWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ServerDatabaseAuthWidgetState();
 }
 
 /// State for widget ServerDatabaseAuthWidget.
-class _ServerDatabaseAuthWidgetState
-    extends ConsumerState<ServerDatabaseAuthWidget> {
+class _ServerDatabaseAuthWidgetState extends ConsumerState<ServerDatabaseAuthWidget> {
   final serverCode = TextEditingController();
   late final controllers = [serverCode];
 
@@ -50,9 +48,7 @@ class _ServerDatabaseAuthWidgetState
     // Permanent removal of a tree stent
     formController.removeListener(_onFormChanged);
 
-    controllers.whereType<ChangeNotifier>().forEach(
-      (listenable) => listenable.dispose(),
-    );
+    controllers.whereType<ChangeNotifier>().forEach((listenable) => listenable.dispose());
 
     _validation.dispose();
 
@@ -86,12 +82,8 @@ class _ServerDatabaseAuthWidgetState
 
     /// блять/бля/бла
     ref.listen(serverDatabaseProvider, (prev, current) {
-      if (current is ServerDatabase$CompletedState &&
-          current.serverDatabase != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AuthWidget()),
-        );
+      if (current is ServerDatabase$CompletedState && current.serverDatabase != null) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AuthWidget()));
       }
     });
 
@@ -100,15 +92,9 @@ class _ServerDatabaseAuthWidgetState
       body: CustomScrollView(
         slivers: [
           switch (serverDatabaseState) {
-            ServerDatabase$InitialState() => SliverToBoxAdapter(
-              child: SizedBox.shrink(),
-            ),
+            ServerDatabase$InitialState() => SliverToBoxAdapter(child: SizedBox.shrink()),
             ServerDatabase$InProgressState() => SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator.adaptive(
-                  backgroundColor: Colors.red,
-                ),
-              ),
+              child: Center(child: CircularProgressIndicator.adaptive(backgroundColor: Colors.red)),
             ),
             ServerDatabase$ErrorState(:final error) => SliverFillRemaining(
               child: Column(
@@ -144,9 +130,7 @@ class _ServerDatabaseAuthWidgetState
                                       uid: serverCode.text.trim(),
                                       onMessage: (message) {
                                         ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                              SnackBar(content: Text(message)),
-                                            );
+                                            .showSnackBar(SnackBar(content: Text(message)));
                                       },
                                     );
                               }

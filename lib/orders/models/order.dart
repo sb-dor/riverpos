@@ -9,9 +9,7 @@ class Order {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Order &&
-          uid == other.uid &&
-          orderItems.hashCode == other.orderItems.hashCode;
+      other is Order && uid == other.uid && orderItems.hashCode == other.orderItems.hashCode;
 
   final String uid;
   final List<OrderItem> orderItems;

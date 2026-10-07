@@ -6,7 +6,7 @@ import 'package:riverpos/sd_auth/models/server_database.dart';
 final serverDatabaseProvider = StateNotifierProvider<ServerDatabaseProvider, ServerDatabaseState>(
   (ref) => ServerDatabaseProvider(
     sdAuthenticationRepository: SDAuthenticationRepositoryImpl(
-      sharedPreferences: ref.read(dependenciesProvider).sharedPreferences,
+      sharedPreferences: dependencies.sharedPreferences,
     ),
   ),
 );
@@ -20,7 +20,8 @@ sealed class ServerDatabaseState {
 
   const factory ServerDatabaseState.error({Object? error}) = ServerDatabase$ErrorState;
 
-  const factory ServerDatabaseState.completed(ServerDatabase? serverDatabase) = ServerDatabase$CompletedState;
+  const factory ServerDatabaseState.completed(ServerDatabase? serverDatabase) =
+      ServerDatabase$CompletedState;
 }
 
 final class ServerDatabase$InitialState extends ServerDatabaseState {
@@ -64,13 +65,19 @@ class ServerDatabaseProvider extends StateNotifier<ServerDatabaseState> {
     }
   }
 
-  void remoteServerDatabase({required String uid, required void Function(String message) onMessage}) async {
+  void remoteServerDatabase({
+    required String uid,
+    required void Function(String message) onMessage,
+  }) async {
     try {
       if (state is ServerDatabase$InProgressState) return;
 
       state = ServerDatabaseState.inProgress();
 
-      final serverDatabase = await _sdAuthenticationRepository.serverDatabase(uid: uid, onMessage: onMessage);
+      final serverDatabase = await _sdAuthenticationRepository.serverDatabase(
+        uid: uid,
+        onMessage: onMessage,
+      );
       //
       state = ServerDatabaseState.completed(serverDatabase);
     } catch (error) {

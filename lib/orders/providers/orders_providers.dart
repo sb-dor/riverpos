@@ -5,8 +5,6 @@ import 'package:riverpos/orders/data/orders_repository.dart';
 import 'package:riverpos/orders/models/order.dart';
 
 final ordersProvider = StateNotifierProvider<OrdersProvider, OrdersState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
-  final localPaginationUtil = ref.read(localPaginationUtilProvider);
   return OrdersProvider(
     ordersRepository: OrdersRepositoryImpl(appDatabase: dependencies.appDatabase),
     localPaginationUtil: localPaginationUtil,
@@ -22,8 +20,11 @@ sealed class OrdersState {
 
   const factory OrdersState.error({Object? error}) = Orders$ErrorState;
 
-  const factory OrdersState.completed({required List<Order> orders, required int page, required bool hasMore}) =
-      Orders$CompletedState;
+  const factory OrdersState.completed({
+    required List<Order> orders,
+    required int page,
+    required bool hasMore,
+  }) = Orders$CompletedState;
 }
 
 class Orders$InitialState extends OrdersState {
@@ -49,8 +50,11 @@ class Orders$CompletedState extends OrdersState {
 }
 
 class OrdersProvider extends StateNotifier<OrdersState> {
-  OrdersProvider({required this._ordersRepository, required this._localPaginationUtil, OrdersState? state})
-    : super(state ?? OrdersState.initial());
+  OrdersProvider({
+    required this._ordersRepository,
+    required this._localPaginationUtil,
+    OrdersState? state,
+  }) : super(state ?? OrdersState.initial());
 
   final IOrdersRepository _ordersRepository;
   final LocalPaginationUtil _localPaginationUtil;
@@ -65,7 +69,10 @@ class OrdersProvider extends StateNotifier<OrdersState> {
 
       final page = _localPaginationUtil.checkIsListHasMorePageInt(list: orders, page: 1);
 
-      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(list: orders, limitInPage: 20);
+      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(
+        list: orders,
+        limitInPage: 20,
+      );
 
       state = OrdersState.completed(orders: orders, page: page, hasMore: hasMore);
     } catch (error) {
@@ -81,9 +88,15 @@ class OrdersProvider extends StateNotifier<OrdersState> {
 
       final orders = await _ordersRepository.orders(page: completedState.page, perPage: 20);
 
-      final page = _localPaginationUtil.checkIsListHasMorePageInt(list: orders, page: completedState.page);
+      final page = _localPaginationUtil.checkIsListHasMorePageInt(
+        list: orders,
+        page: completedState.page,
+      );
 
-      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(list: orders, limitInPage: 20);
+      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(
+        list: orders,
+        limitInPage: 20,
+      );
 
       final currentOrders = List.of(completedState.orders)..addAll(orders);
 

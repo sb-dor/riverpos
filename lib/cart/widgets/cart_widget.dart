@@ -53,8 +53,7 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
   /* #endregion */
 
   void _scrollListener() {
-    if (_scrollController.offset ==
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
       ref.read(productsProvider.notifier).paginate();
     }
   }
@@ -109,69 +108,51 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: Text(
-                      "Signed in: ${authProviderState.user?.fullName ?? '-'}",
-                    ),
+                    child: Text("Signed in: ${authProviderState.user?.fullName ?? '-'}"),
                   ),
                   switch (productsProviderState) {
-                    Products$InitialState() => SliverToBoxAdapter(
-                      child: SizedBox.shrink(),
-                    ),
+                    Products$InitialState() => SliverToBoxAdapter(child: SizedBox.shrink()),
                     Products$InProgressState() => SliverFillRemaining(
-                      child: Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
+                      child: Center(child: CircularProgressIndicator.adaptive()),
                     ),
                     Products$ErrorState(:final error) => SliverFillRemaining(
                       child: Center(child: Text(error.toString())),
                     ),
-                    Products$CompletedState(:final products) =>
-                      SliverList.separated(
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-                          return Card(
-                            margin: EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  child: ColoredBox(color: Colors.green),
+                    Products$CompletedState(:final products) => SliverList.separated(
+                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return Card(
+                          margin: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              CircleAvatar(radius: 25, child: ColoredBox(color: Colors.green)),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: .start,
+                                  crossAxisAlignment: .start,
+                                  children: [
+                                    Text(product.name, style: TextStyle(fontWeight: .bold)),
+                                    Text(product.price.toString()),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: .start,
-                                    crossAxisAlignment: .start,
-                                    children: [
-                                      Text(
-                                        product.name,
-                                        style: TextStyle(fontWeight: .bold),
-                                      ),
-                                      Text(product.price.toString()),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    ref
-                                        .read(cartProvider.notifier)
-                                        .addProduct(product);
-                                  },
-                                  icon: Icon(Icons.add),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  ref.read(cartProvider.notifier).addProduct(product);
+                                },
+                                icon: Icon(Icons.add),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   },
                   if (productsProviderState is Products$CompletedState &&
                       productsProviderState.hasMore)
-                    SliverToBoxAdapter(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
+                    SliverToBoxAdapter(child: CircularProgressIndicator.adaptive()),
                 ],
               ),
             ),
@@ -184,9 +165,7 @@ class _CartWidgetState extends ConsumerState<CartWidget> {
                   child: ElevatedButton(
                     style: ButtonStyle(backgroundColor: .all(Colors.green)),
                     onPressed: () {
-                      ref
-                          .read(saveCartProvider.notifier)
-                          .save(cartProviderState.order);
+                      ref.read(saveCartProvider.notifier).save(cartProviderState.order);
                     },
                     child: Text('save'),
                   ),

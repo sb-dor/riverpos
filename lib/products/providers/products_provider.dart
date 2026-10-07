@@ -5,11 +5,9 @@ import 'package:riverpos/products/data/products_repository.dart';
 import 'package:riverpos/products/models/product.dart';
 
 final productsProvider = StateNotifierProvider<ProductsProvider, ProductsState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
-  final localizationUtil = ref.read(localPaginationUtilProvider);
   return ProductsProvider(
     productsRepository: ProductsRepositoryImpl(apiClient: dependencies.apiClient),
-    localPaginationUtil: localizationUtil,
+    localPaginationUtil: localPaginationUtil,
   );
 });
 
@@ -22,8 +20,11 @@ sealed class ProductsState {
 
   const factory ProductsState.error({Object? error}) = Products$ErrorState;
 
-  const factory ProductsState.completed({required List<Product> products, required int page, required bool hasMore}) =
-      Products$CompletedState;
+  const factory ProductsState.completed({
+    required List<Product> products,
+    required int page,
+    required bool hasMore,
+  }) = Products$CompletedState;
 }
 
 class Products$InitialState extends ProductsState {
@@ -41,7 +42,11 @@ class Products$ErrorState extends ProductsState {
 }
 
 class Products$CompletedState extends ProductsState {
-  const Products$CompletedState({required this.products, required this.page, required this.hasMore});
+  const Products$CompletedState({
+    required this.products,
+    required this.page,
+    required this.hasMore,
+  });
 
   final List<Product> products;
   final int page;
@@ -49,8 +54,11 @@ class Products$CompletedState extends ProductsState {
 }
 
 class ProductsProvider extends StateNotifier<ProductsState> {
-  ProductsProvider({required this._productsRepository, required this._localPaginationUtil, ProductsState? state})
-    : super(state ?? ProductsState.initial());
+  ProductsProvider({
+    required this._productsRepository,
+    required this._localPaginationUtil,
+    ProductsState? state,
+  }) : super(state ?? ProductsState.initial());
 
   final IProductsRepository _productsRepository;
   final LocalPaginationUtil _localPaginationUtil;
@@ -65,7 +73,10 @@ class ProductsProvider extends StateNotifier<ProductsState> {
 
       final page = _localPaginationUtil.checkIsListHasMorePageInt(list: products, page: 1);
 
-      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(list: products, limitInPage: 20);
+      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(
+        list: products,
+        limitInPage: 20,
+      );
 
       state = ProductsState.completed(products: products, page: page, hasMore: hasMore);
     } catch (error) {
@@ -81,9 +92,15 @@ class ProductsProvider extends StateNotifier<ProductsState> {
 
       final products = await _productsRepository.products(page: completedState.page, perPage: 20);
 
-      final page = _localPaginationUtil.checkIsListHasMorePageInt(list: products, page: completedState.page);
+      final page = _localPaginationUtil.checkIsListHasMorePageInt(
+        list: products,
+        page: completedState.page,
+      );
 
-      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(list: products, limitInPage: 20);
+      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(
+        list: products,
+        limitInPage: 20,
+      );
 
       final currentProducts = List.of(completedState.products)..addAll(products);
 

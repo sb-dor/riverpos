@@ -35,9 +35,7 @@ Map<String, Object?> decodeAuthResponse(http.Response response) {
   if (isSuccessStatusCode(response.statusCode)) return body;
 
   final serverError = body['error'] is String ? body['error'] as String : null;
-  final serverMessage = body['message'] is String
-      ? body['message'] as String
-      : null;
+  final serverMessage = body['message'] is String ? body['message'] as String : null;
   final serverCode = body['code'] is String ? body['code'] as String : null;
 
   return switch (response.statusCode) {

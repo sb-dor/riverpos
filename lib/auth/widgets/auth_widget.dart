@@ -44,9 +44,7 @@ class _AuthWidgetState extends ConsumerState<AuthWidget> {
   void dispose() {
     formController.removeListener(_onFormChanged);
 
-    controllers.whereType<ChangeNotifier>().forEach(
-      (listenable) => listenable.dispose(),
-    );
+    controllers.whereType<ChangeNotifier>().forEach((listenable) => listenable.dispose());
 
     _validation.dispose();
     _error.dispose();
@@ -87,10 +85,7 @@ class _AuthWidgetState extends ConsumerState<AuthWidget> {
     //
     ref.listen(authProvider, (prev, current) {
       if (current is AuthenticatedState) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => OrdersScope()),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrdersScope()));
       }
     });
 
@@ -128,9 +123,7 @@ class _AuthWidgetState extends ConsumerState<AuthWidget> {
                                     password: password.text.trim(),
                                     onMessage: (message) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                            SnackBar(content: Text(message)),
-                                          );
+                                          .showSnackBar(SnackBar(content: Text(message)));
                                     },
                                   );
                             }

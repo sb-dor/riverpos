@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
-final counterProvider = StateNotifierProvider<CounterProvider, int>(
-  (ref) => CounterProvider(),
-);
+final counterProvider = StateNotifierProvider<CounterProvider, int>((ref) => CounterProvider());
 
 final counterAlertProvider = Provider<String>((ref) {
   // пздц

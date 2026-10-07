@@ -7,13 +7,7 @@ sealed class Identity {
 }
 
 class User extends Identity {
-  User({
-    required this.id,
-    this.warehouseId,
-    this.warehouseName,
-    this.firstName,
-    this.lastName,
-  });
+  User({required this.id, this.warehouseId, this.warehouseName, this.firstName, this.lastName});
 
   factory User.fromJson(Map<String, Object?> json) {
     return User(

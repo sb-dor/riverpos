@@ -40,8 +40,7 @@ final class AuthRepositoryImpl implements IAuthenticationRepository {
     final response = await http.post(
       Uri.parse('${_api.call()}$_loginPath'),
       body: <String, Object?>{'email': email, 'password': password},
-      headers: await ApiClientHeaders(sharedPreferences: _sharedPreferences)
-          .headers(),
+      headers: await ApiClientHeaders(sharedPreferences: _sharedPreferences).headers(),
     );
 
     final parsedBody = decodeAuthResponse(response);
@@ -66,10 +65,7 @@ final class AuthRepositoryImpl implements IAuthenticationRepository {
         await _sharedPreferences.setInt('warehouse_id', user.warehouseId!);
       }
       if (user.warehouseName != null) {
-        await _sharedPreferences.setString(
-          'warehouse_name',
-          user.warehouseName!,
-        );
+        await _sharedPreferences.setString('warehouse_name', user.warehouseName!);
       }
 
       return user;
@@ -83,8 +79,7 @@ final class AuthRepositoryImpl implements IAuthenticationRepository {
     try {
       final response = await http.get(
         Uri.parse('${_api.call()}$_session'),
-        headers: await ApiClientHeaders(sharedPreferences: _sharedPreferences)
-            .headers(),
+        headers: await ApiClientHeaders(sharedPreferences: _sharedPreferences).headers(),
       );
 
       final parsedBody = decodeAuthResponse(response);
@@ -95,19 +90,14 @@ final class AuthRepositoryImpl implements IAuthenticationRepository {
         final user = User.fromJson(parsedBody);
 
         await _sharedPreferences.setInt('user_id', user.id);
-        final allowedToChangeWarehouse = _sharedPreferences.getBool(
-          'allowed_to_change_warehouse',
-        );
+        final allowedToChangeWarehouse = _sharedPreferences.getBool('allowed_to_change_warehouse');
         if (allowedToChangeWarehouse == null || allowedToChangeWarehouse) {
           //
           if (user.warehouseId != null) {
             await _sharedPreferences.setInt('warehouse_id', user.warehouseId!);
           }
           if (user.warehouseName != null) {
-            await _sharedPreferences.setString(
-              'warehouse_name',
-              user.warehouseName!,
-            );
+            await _sharedPreferences.setString('warehouse_name', user.warehouseName!);
           }
         }
         return user;
@@ -128,8 +118,7 @@ final class AuthRepositoryImpl implements IAuthenticationRepository {
   Future<bool> logout() async {
     final response = await http.post(
       Uri.parse('${_api.call()}$_logout'),
-      headers: await ApiClientHeaders(sharedPreferences: _sharedPreferences)
-          .headers(),
+      headers: await ApiClientHeaders(sharedPreferences: _sharedPreferences).headers(),
     );
 
     final parsedBody = decodeAuthResponse(response);

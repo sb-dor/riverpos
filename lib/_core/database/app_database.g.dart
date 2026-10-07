@@ -18,9 +18,7 @@ class $TempOrdersTableTable extends TempOrdersTable
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
   static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
   @override
@@ -31,9 +29,7 @@ class $TempOrdersTableTable extends TempOrdersTable
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _invoiceMeta = const VerificationMeta(
-    'invoice',
-  );
+  static const VerificationMeta _invoiceMeta = const VerificationMeta('invoice');
   @override
   late final GeneratedColumn<String> invoice = GeneratedColumn<String>(
     'invoice',
@@ -60,16 +56,10 @@ class $TempOrdersTableTable extends TempOrdersTable
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('uuid')) {
-      context.handle(
-        _uuidMeta,
-        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
-      );
+      context.handle(_uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
     }
     if (data.containsKey('invoice')) {
-      context.handle(
-        _invoiceMeta,
-        invoice.isAcceptableOrUnknown(data['invoice']!, _invoiceMeta),
-      );
+      context.handle(_invoiceMeta, invoice.isAcceptableOrUnknown(data['invoice']!, _invoiceMeta));
     }
     return context;
   }
@@ -80,14 +70,8 @@ class $TempOrdersTableTable extends TempOrdersTable
   TempOrdersTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TempOrdersTableData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      uuid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}uuid'],
-      ),
+      id: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      uuid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}uuid']),
       invoice: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}invoice'],
@@ -101,8 +85,7 @@ class $TempOrdersTableTable extends TempOrdersTable
   }
 }
 
-class TempOrdersTableData extends DataClass
-    implements Insertable<TempOrdersTableData> {
+class TempOrdersTableData extends DataClass implements Insertable<TempOrdersTableData> {
   final int id;
   final String? uuid;
   final String? invoice;
@@ -124,16 +107,11 @@ class TempOrdersTableData extends DataClass
     return TempOrdersTableCompanion(
       id: Value(id),
       uuid: uuid == null && nullToAbsent ? const Value.absent() : Value(uuid),
-      invoice: invoice == null && nullToAbsent
-          ? const Value.absent()
-          : Value(invoice),
+      invoice: invoice == null && nullToAbsent ? const Value.absent() : Value(invoice),
     );
   }
 
-  factory TempOrdersTableData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory TempOrdersTableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TempOrdersTableData(
       id: serializer.fromJson<int>(json['id']),
@@ -268,9 +246,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
   static const VerificationMeta _uidMeta = const VerificationMeta('uid');
   @override
@@ -281,9 +257,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _orderIdMeta = const VerificationMeta(
-    'orderId',
-  );
+  static const VerificationMeta _orderIdMeta = const VerificationMeta('orderId');
   @override
   late final GeneratedColumn<int> orderId = GeneratedColumn<int>(
     'order_id',
@@ -292,9 +266,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _productIdMeta = const VerificationMeta(
-    'productId',
-  );
+  static const VerificationMeta _productIdMeta = const VerificationMeta('productId');
   @override
   late final GeneratedColumn<int> productId = GeneratedColumn<int>(
     'product_id',
@@ -303,9 +275,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _productNameMeta = const VerificationMeta(
-    'productName',
-  );
+  static const VerificationMeta _productNameMeta = const VerificationMeta('productName');
   @override
   late final GeneratedColumn<String> productName = GeneratedColumn<String>(
     'product_name',
@@ -333,15 +303,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    uid,
-    orderId,
-    productId,
-    productName,
-    price,
-    qty,
-  ];
+  List<GeneratedColumn> get $columns => [id, uid, orderId, productId, productName, price, qty];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -358,16 +320,10 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('uid')) {
-      context.handle(
-        _uidMeta,
-        uid.isAcceptableOrUnknown(data['uid']!, _uidMeta),
-      );
+      context.handle(_uidMeta, uid.isAcceptableOrUnknown(data['uid']!, _uidMeta));
     }
     if (data.containsKey('order_id')) {
-      context.handle(
-        _orderIdMeta,
-        orderId.isAcceptableOrUnknown(data['order_id']!, _orderIdMeta),
-      );
+      context.handle(_orderIdMeta, orderId.isAcceptableOrUnknown(data['order_id']!, _orderIdMeta));
     }
     if (data.containsKey('product_id')) {
       context.handle(
@@ -378,23 +334,14 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
     if (data.containsKey('product_name')) {
       context.handle(
         _productNameMeta,
-        productName.isAcceptableOrUnknown(
-          data['product_name']!,
-          _productNameMeta,
-        ),
+        productName.isAcceptableOrUnknown(data['product_name']!, _productNameMeta),
       );
     }
     if (data.containsKey('price')) {
-      context.handle(
-        _priceMeta,
-        price.isAcceptableOrUnknown(data['price']!, _priceMeta),
-      );
+      context.handle(_priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
     }
     if (data.containsKey('qty')) {
-      context.handle(
-        _qtyMeta,
-        qty.isAcceptableOrUnknown(data['qty']!, _qtyMeta),
-      );
+      context.handle(_qtyMeta, qty.isAcceptableOrUnknown(data['qty']!, _qtyMeta));
     }
     return context;
   }
@@ -402,20 +349,11 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TempOrderItemsTableData map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
+  TempOrderItemsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TempOrderItemsTableData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      uid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}uid'],
-      ),
+      id: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      uid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}uid']),
       orderId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}order_id'],
@@ -432,10 +370,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
         DriftSqlType.double,
         data['${effectivePrefix}price'],
       ),
-      qty: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}qty'],
-      ),
+      qty: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}qty']),
     );
   }
 
@@ -445,8 +380,7 @@ class $TempOrderItemsTableTable extends TempOrderItemsTable
   }
 }
 
-class TempOrderItemsTableData extends DataClass
-    implements Insertable<TempOrderItemsTableData> {
+class TempOrderItemsTableData extends DataClass implements Insertable<TempOrderItemsTableData> {
   final int id;
   final String? uid;
   final int? orderId;
@@ -492,18 +426,10 @@ class TempOrderItemsTableData extends DataClass
     return TempOrderItemsTableCompanion(
       id: Value(id),
       uid: uid == null && nullToAbsent ? const Value.absent() : Value(uid),
-      orderId: orderId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(orderId),
-      productId: productId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(productId),
-      productName: productName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(productName),
-      price: price == null && nullToAbsent
-          ? const Value.absent()
-          : Value(price),
+      orderId: orderId == null && nullToAbsent ? const Value.absent() : Value(orderId),
+      productId: productId == null && nullToAbsent ? const Value.absent() : Value(productId),
+      productName: productName == null && nullToAbsent ? const Value.absent() : Value(productName),
+      price: price == null && nullToAbsent ? const Value.absent() : Value(price),
       qty: qty == null && nullToAbsent ? const Value.absent() : Value(qty),
     );
   }
@@ -560,9 +486,7 @@ class TempOrderItemsTableData extends DataClass
       uid: data.uid.present ? data.uid.value : this.uid,
       orderId: data.orderId.present ? data.orderId.value : this.orderId,
       productId: data.productId.present ? data.productId.value : this.productId,
-      productName: data.productName.present
-          ? data.productName.value
-          : this.productName,
+      productName: data.productName.present ? data.productName.value : this.productName,
       price: data.price.present ? data.price.value : this.price,
       qty: data.qty.present ? data.qty.value : this.qty,
     );
@@ -583,8 +507,7 @@ class TempOrderItemsTableData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, uid, orderId, productId, productName, price, qty);
+  int get hashCode => Object.hash(id, uid, orderId, productId, productName, price, qty);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -598,8 +521,7 @@ class TempOrderItemsTableData extends DataClass
           other.qty == this.qty);
 }
 
-class TempOrderItemsTableCompanion
-    extends UpdateCompanion<TempOrderItemsTableData> {
+class TempOrderItemsTableCompanion extends UpdateCompanion<TempOrderItemsTableData> {
   final Value<int> id;
   final Value<String?> uid;
   final Value<int?> orderId;
@@ -710,36 +632,27 @@ class TempOrderItemsTableCompanion
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $TempOrdersTableTable tempOrdersTable = $TempOrdersTableTable(
-    this,
-  );
-  late final $TempOrderItemsTableTable tempOrderItemsTable =
-      $TempOrderItemsTableTable(this);
+  late final $TempOrdersTableTable tempOrdersTable = $TempOrdersTableTable(this);
+  late final $TempOrderItemsTableTable tempOrderItemsTable = $TempOrderItemsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [
-    tempOrdersTable,
-    tempOrderItemsTable,
-  ];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [tempOrdersTable, tempOrderItemsTable];
 }
 
-typedef $$TempOrdersTableTableCreateCompanionBuilder =
-    TempOrdersTableCompanion Function({
-      Value<int> id,
-      Value<String?> uuid,
-      Value<String?> invoice,
-    });
-typedef $$TempOrdersTableTableUpdateCompanionBuilder =
-    TempOrdersTableCompanion Function({
-      Value<int> id,
-      Value<String?> uuid,
-      Value<String?> invoice,
-    });
+typedef $$TempOrdersTableTableCreateCompanionBuilder = TempOrdersTableCompanion Function({
+  Value<int> id,
+  Value<String?> uuid,
+  Value<String?> invoice,
+});
+typedef $$TempOrdersTableTableUpdateCompanionBuilder = TempOrdersTableCompanion Function({
+  Value<int> id,
+  Value<String?> uuid,
+  Value<String?> invoice,
+});
 
-class $$TempOrdersTableTableFilterComposer
-    extends Composer<_$AppDatabase, $TempOrdersTableTable> {
+class $$TempOrdersTableTableFilterComposer extends Composer<_$AppDatabase, $TempOrdersTableTable> {
   $$TempOrdersTableTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -747,20 +660,14 @@ class $$TempOrdersTableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get uuid => $composableBuilder(
-    column: $table.uuid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get invoice => $composableBuilder(
-    column: $table.invoice,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get invoice =>
+      $composableBuilder(column: $table.invoice, builder: (column) => ColumnFilters(column));
 }
 
 class $$TempOrdersTableTableOrderingComposer
@@ -772,20 +679,14 @@ class $$TempOrdersTableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get uuid => $composableBuilder(
-    column: $table.uuid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get invoice => $composableBuilder(
-    column: $table.invoice,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get invoice =>
+      $composableBuilder(column: $table.invoice, builder: (column) => ColumnOrderings(column));
 }
 
 class $$TempOrdersTableTableAnnotationComposer
@@ -797,8 +698,7 @@ class $$TempOrdersTableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
+  GeneratedColumn<int> get id => $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get uuid =>
       $composableBuilder(column: $table.uuid, builder: (column) => column);
@@ -820,19 +720,13 @@ class $$TempOrdersTableTableTableManager
           $$TempOrdersTableTableUpdateCompanionBuilder,
           (
             TempOrdersTableData,
-            BaseReferences<
-              _$AppDatabase,
-              $TempOrdersTableTable,
-              TempOrdersTableData
-            >,
+            BaseReferences<_$AppDatabase, $TempOrdersTableTable, TempOrdersTableData>,
           ),
           TempOrdersTableData,
           PrefetchHooks Function()
         > {
-  $$TempOrdersTableTableTableManager(
-    _$AppDatabase db,
-    $TempOrdersTableTable table,
-  ) : super(
+  $$TempOrdersTableTableTableManager(_$AppDatabase db, $TempOrdersTableTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
@@ -847,27 +741,20 @@ class $$TempOrdersTableTableTableManager
             Value<String?> uuid = const Value.absent(),
             Value<String?> invoice = const Value.absent(),
           }) => TempOrdersTableCompanion(id: id, uuid: uuid, invoice: invoice),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String?> uuid = const Value.absent(),
-                Value<String?> invoice = const Value.absent(),
-              }) => TempOrdersTableCompanion.insert(
-                id: id,
-                uuid: uuid,
-                invoice: invoice,
-              ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String?> uuid = const Value.absent(),
+            Value<String?> invoice = const Value.absent(),
+          }) => TempOrdersTableCompanion.insert(id: id, uuid: uuid, invoice: invoice),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$TempOrdersTableTable, TempOrdersTableData>(
+                  e.readTable<$TempOrdersTableTable, TempOrdersTableData>(table),
+                  BaseReferences<_$AppDatabase, $TempOrdersTableTable, TempOrdersTableData>(
+                    db,
                     table,
+                    e,
                   ),
-                  BaseReferences<
-                    _$AppDatabase,
-                    $TempOrdersTableTable,
-                    TempOrdersTableData
-                  >(db, table, e),
                 ),
               )
               .toList(),
@@ -888,35 +775,29 @@ typedef $$TempOrdersTableTableProcessedTableManager =
       $$TempOrdersTableTableUpdateCompanionBuilder,
       (
         TempOrdersTableData,
-        BaseReferences<
-          _$AppDatabase,
-          $TempOrdersTableTable,
-          TempOrdersTableData
-        >,
+        BaseReferences<_$AppDatabase, $TempOrdersTableTable, TempOrdersTableData>,
       ),
       TempOrdersTableData,
       PrefetchHooks Function()
     >;
-typedef $$TempOrderItemsTableTableCreateCompanionBuilder =
-    TempOrderItemsTableCompanion Function({
-      Value<int> id,
-      Value<String?> uid,
-      Value<int?> orderId,
-      Value<int?> productId,
-      Value<String?> productName,
-      Value<double?> price,
-      Value<double?> qty,
-    });
-typedef $$TempOrderItemsTableTableUpdateCompanionBuilder =
-    TempOrderItemsTableCompanion Function({
-      Value<int> id,
-      Value<String?> uid,
-      Value<int?> orderId,
-      Value<int?> productId,
-      Value<String?> productName,
-      Value<double?> price,
-      Value<double?> qty,
-    });
+typedef $$TempOrderItemsTableTableCreateCompanionBuilder = TempOrderItemsTableCompanion Function({
+  Value<int> id,
+  Value<String?> uid,
+  Value<int?> orderId,
+  Value<int?> productId,
+  Value<String?> productName,
+  Value<double?> price,
+  Value<double?> qty,
+});
+typedef $$TempOrderItemsTableTableUpdateCompanionBuilder = TempOrderItemsTableCompanion Function({
+  Value<int> id,
+  Value<String?> uid,
+  Value<int?> orderId,
+  Value<int?> productId,
+  Value<String?> productName,
+  Value<double?> price,
+  Value<double?> qty,
+});
 
 class $$TempOrderItemsTableTableFilterComposer
     extends Composer<_$AppDatabase, $TempOrderItemsTableTable> {
@@ -927,40 +808,26 @@ class $$TempOrderItemsTableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get uid => $composableBuilder(
-    column: $table.uid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get uid =>
+      $composableBuilder(column: $table.uid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get orderId => $composableBuilder(
-    column: $table.orderId,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get orderId =>
+      $composableBuilder(column: $table.orderId, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get productId => $composableBuilder(
-    column: $table.productId,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get productId =>
+      $composableBuilder(column: $table.productId, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get productName => $composableBuilder(
-    column: $table.productName,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get productName =>
+      $composableBuilder(column: $table.productName, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get price => $composableBuilder(
-    column: $table.price,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get qty => $composableBuilder(
-    column: $table.qty,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<double> get qty =>
+      $composableBuilder(column: $table.qty, builder: (column) => ColumnFilters(column));
 }
 
 class $$TempOrderItemsTableTableOrderingComposer
@@ -972,40 +839,26 @@ class $$TempOrderItemsTableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get uid => $composableBuilder(
-    column: $table.uid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get uid =>
+      $composableBuilder(column: $table.uid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get orderId => $composableBuilder(
-    column: $table.orderId,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get orderId =>
+      $composableBuilder(column: $table.orderId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get productId => $composableBuilder(
-    column: $table.productId,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get productId =>
+      $composableBuilder(column: $table.productId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get productName => $composableBuilder(
-    column: $table.productName,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get productName =>
+      $composableBuilder(column: $table.productName, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get price => $composableBuilder(
-    column: $table.price,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get qty => $composableBuilder(
-    column: $table.qty,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<double> get qty =>
+      $composableBuilder(column: $table.qty, builder: (column) => ColumnOrderings(column));
 }
 
 class $$TempOrderItemsTableTableAnnotationComposer
@@ -1017,8 +870,7 @@ class $$TempOrderItemsTableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
+  GeneratedColumn<int> get id => $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get uid =>
       $composableBuilder(column: $table.uid, builder: (column) => column);
@@ -1029,10 +881,8 @@ class $$TempOrderItemsTableTableAnnotationComposer
   GeneratedColumn<int> get productId =>
       $composableBuilder(column: $table.productId, builder: (column) => column);
 
-  GeneratedColumn<String> get productName => $composableBuilder(
-    column: $table.productName,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get productName =>
+      $composableBuilder(column: $table.productName, builder: (column) => column);
 
   GeneratedColumn<double> get price =>
       $composableBuilder(column: $table.price, builder: (column) => column);
@@ -1054,34 +904,22 @@ class $$TempOrderItemsTableTableTableManager
           $$TempOrderItemsTableTableUpdateCompanionBuilder,
           (
             TempOrderItemsTableData,
-            BaseReferences<
-              _$AppDatabase,
-              $TempOrderItemsTableTable,
-              TempOrderItemsTableData
-            >,
+            BaseReferences<_$AppDatabase, $TempOrderItemsTableTable, TempOrderItemsTableData>,
           ),
           TempOrderItemsTableData,
           PrefetchHooks Function()
         > {
-  $$TempOrderItemsTableTableTableManager(
-    _$AppDatabase db,
-    $TempOrderItemsTableTable table,
-  ) : super(
+  $$TempOrderItemsTableTableTableManager(_$AppDatabase db, $TempOrderItemsTableTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
               $$TempOrderItemsTableTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$TempOrderItemsTableTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
+              $$TempOrderItemsTableTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$TempOrderItemsTableTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+              $$TempOrderItemsTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -1121,15 +959,12 @@ class $$TempOrderItemsTableTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<
-                    $TempOrderItemsTableTable,
-                    TempOrderItemsTableData
-                  >(table),
-                  BaseReferences<
-                    _$AppDatabase,
-                    $TempOrderItemsTableTable,
-                    TempOrderItemsTableData
-                  >(db, table, e),
+                  e.readTable<$TempOrderItemsTableTable, TempOrderItemsTableData>(table),
+                  BaseReferences<_$AppDatabase, $TempOrderItemsTableTable, TempOrderItemsTableData>(
+                    db,
+                    table,
+                    e,
+                  ),
                 ),
               )
               .toList(),
@@ -1150,11 +985,7 @@ typedef $$TempOrderItemsTableTableProcessedTableManager =
       $$TempOrderItemsTableTableUpdateCompanionBuilder,
       (
         TempOrderItemsTableData,
-        BaseReferences<
-          _$AppDatabase,
-          $TempOrderItemsTableTable,
-          TempOrderItemsTableData
-        >,
+        BaseReferences<_$AppDatabase, $TempOrderItemsTableTable, TempOrderItemsTableData>,
       ),
       TempOrderItemsTableData,
       PrefetchHooks Function()

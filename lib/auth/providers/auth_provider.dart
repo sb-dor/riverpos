@@ -5,7 +5,6 @@ import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 
 final authProvider = StateNotifierProvider<AuthProvider, AuthState>((ref) {
-  final dependencies = ref.read(dependenciesProvider);
   final sdCompletedState = ref.read(serverDatabaseProvider) as ServerDatabase$CompletedState;
   return AuthProvider(
     authenticationRepository: AuthRepositoryImpl(
@@ -53,7 +52,8 @@ class AuthenticatedState extends AuthState {
 }
 
 class AuthProvider extends StateNotifier<AuthState> {
-  AuthProvider({required this._authenticationRepository, AuthState? state}) : super(state ?? AuthState.initial());
+  AuthProvider({required this._authenticationRepository, AuthState? state})
+    : super(state ?? AuthState.initial());
 
   final IAuthenticationRepository _authenticationRepository;
 
@@ -65,7 +65,11 @@ class AuthProvider extends StateNotifier<AuthState> {
     try {
       if (state is Auth$InProgressState) return;
 
-      final user = await _authenticationRepository.signIn(email: email, password: password, onMessage: onMessage);
+      final user = await _authenticationRepository.signIn(
+        email: email,
+        password: password,
+        onMessage: onMessage,
+      );
 
       if (user == null) {
         state = AuthState.initial();

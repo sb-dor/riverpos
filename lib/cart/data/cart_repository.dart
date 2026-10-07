@@ -19,12 +19,7 @@ final class Cart$LocalRepositoryImpl implements ICartRepository {
 
     final id = await _appDatabase
         .into(_appDatabase.tempOrdersTable)
-        .insert(
-          TempOrdersTableCompanion(
-            uuid: Value(order.uid),
-            invoice: Value(order.uid),
-          ),
-        );
+        .insert(TempOrdersTableCompanion(uuid: Value(order.uid), invoice: Value(order.uid)));
 
     await _appDatabase.batch((batch) {
       for (final item in order.orderItems) {

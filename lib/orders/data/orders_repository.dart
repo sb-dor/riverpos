@@ -32,11 +32,7 @@ class OrdersRepositoryImpl implements IOrdersRepository {
           .map(
             (el) => OrderItem(
               uid: item.uuid ?? Uuid().v4(),
-              product: Product(
-                id: el.productId!,
-                name: el.productName!,
-                price: el.price ?? 0,
-              ),
+              product: Product(id: el.productId!, name: el.productName!, price: el.price ?? 0),
               price: el.price ?? 0,
               qty: el.qty ?? 0,
             ),

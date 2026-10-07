@@ -47,33 +47,20 @@ class _CartItemsWidgetState extends ConsumerState<CartItemsWidget> {
                   margin: EdgeInsets.all(10),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 25,
-                        child: ColoredBox(color: Colors.green),
-                      ),
+                      CircleAvatar(radius: 25, child: ColoredBox(color: Colors.green)),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: .start,
                           crossAxisAlignment: .start,
                           children: [
-                            Text(
-                              item.product.name,
-                              style: TextStyle(fontWeight: .bold),
-                            ),
+                            Text(item.product.name, style: TextStyle(fontWeight: .bold)),
                             Text(item.price.toString()),
                           ],
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.remove),
-                        color: Colors.red,
-                      ),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.remove), color: Colors.red),
 
-                      Text(
-                        item.qty.toString(),
-                        style: TextStyle(fontWeight: .bold),
-                      ),
+                      Text(item.qty.toString(), style: TextStyle(fontWeight: .bold)),
 
                       IconButton(
                         onPressed: () {},

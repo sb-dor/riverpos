@@ -21,12 +21,9 @@ abstract interface class ISDAuthenticationRepository {
   Future<bool> clearLocalServerDatabase();
 }
 
-final class SDAuthenticationRepositoryImpl
-    implements ISDAuthenticationRepository {
-  SDAuthenticationRepositoryImpl({
-    http.Client? apiClient,
-    required this._sharedPreferences,
-  }) : _apiClient = apiClient ?? http.Client();
+final class SDAuthenticationRepositoryImpl implements ISDAuthenticationRepository {
+  SDAuthenticationRepositoryImpl({http.Client? apiClient, required this._sharedPreferences})
+    : _apiClient = apiClient ?? http.Client();
 
   final http.Client _apiClient;
   final SharedPreferences _sharedPreferences;
@@ -52,19 +49,13 @@ final class SDAuthenticationRepositoryImpl
     required void Function(String message) onMessage,
     String? baseUrl,
   }) async {
-    final normalizedBaseUrl = (baseUrl ?? Config.apiAdminBaseUrl).replaceFirst(
-      RegExp(r'/+$'),
-      '',
-    );
+    final normalizedBaseUrl = (baseUrl ?? Config.apiAdminBaseUrl).replaceFirst(RegExp(r'/+$'), '');
     final response = await _apiClient.get(
-      Uri.parse('$normalizedBaseUrl$_serverDatabase')
-          .replace(queryParameters: {'uid': uid}),
+      Uri.parse('$normalizedBaseUrl$_serverDatabase').replace(queryParameters: {'uid': uid}),
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        'Not compatible status code for getting server database: ${response.body}',
-      );
+      throw Exception('Not compatible status code for getting server database: ${response.body}');
     }
 
     final json = JsonUtil.jsonDecode(response.body);
@@ -84,10 +75,7 @@ final class SDAuthenticationRepositoryImpl
           backendApi: '${serverDatabase.backendApi}/api',
           uid: () => serverDatabase.uid ?? uid,
         );
-        await _sharedPreferences.setString(
-          'local_sd',
-          jsonEncode(serverDatabase.toMap()),
-        );
+        await _sharedPreferences.setString('local_sd', jsonEncode(serverDatabase.toMap()));
         return serverDatabase;
       }
 
@@ -99,10 +87,7 @@ final class SDAuthenticationRepositoryImpl
 
   @override
   Future<void> setLocalServerDatabase(ServerDatabase serverDatabase) async {
-    await _sharedPreferences.setString(
-      'local_sd',
-      jsonEncode(serverDatabase.toMap()),
-    );
+    await _sharedPreferences.setString('local_sd', jsonEncode(serverDatabase.toMap()));
   }
 
   @override

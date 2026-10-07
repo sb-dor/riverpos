@@ -43,8 +43,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
   /* #endregion */
 
   void _scrollListener() {
-    if (_scrollController.offset ==
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
       ref.read(ordersProvider.notifier).paginate();
     }
   }
@@ -65,9 +64,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
           controller: _scrollController,
           slivers: [
             SliverToBoxAdapter(
-              child: Text(
-                "Signed in: ${authProviderState.user?.fullName ?? '-'}",
-              ),
+              child: Text("Signed in: ${authProviderState.user?.fullName ?? '-'}"),
             ),
             SliverToBoxAdapter(
               child: Padding(
@@ -93,10 +90,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
                       child: Center(
                         child: Text(
                           "Add order",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: .w700,
-                          ),
+                          style: TextStyle(color: Colors.white, fontWeight: .w700),
                         ),
                       ),
                     ),
@@ -105,15 +99,11 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
               ),
             ),
             switch (ordersProviderState) {
-              Orders$InitialState() => SliverToBoxAdapter(
-                child: SizedBox.shrink(),
-              ),
+              Orders$InitialState() => SliverToBoxAdapter(child: SizedBox.shrink()),
               Orders$InProgressState() => SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator.adaptive()),
               ),
-              Orders$ErrorState(:final error) => SliverFillRemaining(
-                child: Text(error.toString()),
-              ),
+              Orders$ErrorState(:final error) => SliverFillRemaining(child: Text(error.toString())),
               Orders$CompletedState(:final orders) => SliverGrid.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: 100,
@@ -136,9 +126,7 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
                         ),
                       );
                     },
-                    child: Card(
-                      child: Center(child: Text('Order: ${index + 1}')),
-                    ),
+                    child: Card(child: Center(child: Text('Order: ${index + 1}'))),
                   );
                 },
               ),
@@ -157,11 +145,8 @@ class _OrdersWidgetState extends ConsumerState<OrdersWidget> {
             //     ],
             //   ),
             // ),
-            if (ordersProviderState is Orders$CompletedState &&
-                ordersProviderState.hasMore)
-              SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              ),
+            if (ordersProviderState is Orders$CompletedState && ordersProviderState.hasMore)
+              SliverToBoxAdapter(child: Center(child: CircularProgressIndicator.adaptive())),
           ],
         ),
       ),
