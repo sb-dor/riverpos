@@ -19,14 +19,7 @@ class CartProvider extends Notifier<Cart> {
   void addProduct(Product product) {
     /// just for testing
     final orderItems = List.of(state.order.orderItems);
-    orderItems.add(
-      OrderItem(
-        uid: Uuid().v4(),
-        product: product,
-        price: product.price,
-        qty: 1,
-      ),
-    );
+    orderItems.add(OrderItem(uid: Uuid().v4(), product: product, price: product.price, qty: 1));
     state = state.copyWith(order: state.order.copyWith(orderItems: orderItems));
   }
 }

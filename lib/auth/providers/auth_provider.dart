@@ -1,25 +1,19 @@
-import 'package:riverpod/riverpod.dart';
+import 'package:riverpod/legacy.dart';
 import 'package:riverpos/auth/data/auth_repository.dart';
 import 'package:riverpos/auth/models/identity.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/sd_auth/providers/server_database_provider.dart';
 
-/// I could create this globally with no riverpod's provider (simple global variable)
-/// but Even if I could access the global variable, I would still be violating the rules of dependency injection.
-/// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-final authRepositoryImplProvider = Provider<IAuthenticationRepository>((ref) {
+final authProvider = StateNotifierProvider<AuthProvider, AuthState>((ref) {
   final dependencies = ref.read(dependenciesProvider);
-  final sdCompletedState =
-      ref.read(serverDatabaseProvider) as ServerDatabase$CompletedState;
-  return AuthRepositoryImpl(
-    sharedPreferences: dependencies.sharedPreferences,
-    api: () => sdCompletedState.serverDatabase?.backendApi ?? '',
+  final sdCompletedState = ref.read(serverDatabaseProvider) as ServerDatabase$CompletedState;
+  return AuthProvider(
+    authenticationRepository: AuthRepositoryImpl(
+      sharedPreferences: dependencies.sharedPreferences,
+      api: () => sdCompletedState.serverDatabase?.backendApi ?? '',
+    ),
   );
 });
-
-final authProvider = NotifierProvider<AuthProvider, AuthState>(
-  AuthProvider.new,
-);
 
 sealed class AuthState {
   const AuthState();
@@ -30,8 +24,7 @@ sealed class AuthState {
 
   const factory AuthState.error({Object? error}) = Auth$ErrorState;
 
-  const factory AuthState.completed({required Identity identity}) =
-      AuthenticatedState;
+  const factory AuthState.completed({required Identity identity}) = AuthenticatedState;
 
   User? get user => switch (this) {
     AuthenticatedState(:final identity) => identity as User,
@@ -59,9 +52,10 @@ class AuthenticatedState extends AuthState {
   final Identity identity;
 }
 
-class AuthProvider extends Notifier<AuthState> {
-  @override
-  AuthState build() => AuthState.initial();
+class AuthProvider extends StateNotifier<AuthState> {
+  AuthProvider({required this._authenticationRepository, AuthState? state}) : super(state ?? AuthState.initial());
+
+  final IAuthenticationRepository _authenticationRepository;
 
   void signIn({
     required String email,
@@ -71,16 +65,7 @@ class AuthProvider extends Notifier<AuthState> {
     try {
       if (state is Auth$InProgressState) return;
 
-      /// блять/бля/бла
-      /// Even if I could access the global variable, I would still be violating the rules of dependency injection.
-      /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-      final authRepositoryImpl = ref.read(authRepositoryImplProvider);
-
-      final user = await authRepositoryImpl.signIn(
-        email: email,
-        password: password,
-        onMessage: onMessage,
-      );
+      final user = await _authenticationRepository.signIn(email: email, password: password, onMessage: onMessage);
 
       if (user == null) {
         state = AuthState.initial();

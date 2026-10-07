@@ -1,19 +1,16 @@
-import 'package:riverpod/riverpod.dart';
+import 'package:riverpod/legacy.dart';
 import 'package:riverpos/_core/local_pagination_util.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/products/data/products_repository.dart';
 import 'package:riverpos/products/models/product.dart';
 
-/// I could create this globally with no riverpod's provider (simple global variable)
-/// but Even if I could access the global variable, I would still be violating the rules of dependency injection.
-/// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-final productsProvider = NotifierProvider<ProductsProvider, ProductsState>(
-  ProductsProvider.new,
-);
-
-final productsRepositoryImpl = Provider<IProductsRepository>((ref) {
+final productsProvider = StateNotifierProvider<ProductsProvider, ProductsState>((ref) {
   final dependencies = ref.read(dependenciesProvider);
-  return ProductsRepositoryImpl(apiClient: dependencies.apiClient);
+  final localizationUtil = ref.read(localPaginationUtilProvider);
+  return ProductsProvider(
+    productsRepository: ProductsRepositoryImpl(apiClient: dependencies.apiClient),
+    localPaginationUtil: localizationUtil,
+  );
 });
 
 sealed class ProductsState {
@@ -25,11 +22,8 @@ sealed class ProductsState {
 
   const factory ProductsState.error({Object? error}) = Products$ErrorState;
 
-  const factory ProductsState.completed({
-    required List<Product> products,
-    required int page,
-    required bool hasMore,
-  }) = Products$CompletedState;
+  const factory ProductsState.completed({required List<Product> products, required int page, required bool hasMore}) =
+      Products$CompletedState;
 }
 
 class Products$InitialState extends ProductsState {
@@ -47,20 +41,19 @@ class Products$ErrorState extends ProductsState {
 }
 
 class Products$CompletedState extends ProductsState {
-  const Products$CompletedState({
-    required this.products,
-    required this.page,
-    required this.hasMore,
-  });
+  const Products$CompletedState({required this.products, required this.page, required this.hasMore});
 
   final List<Product> products;
   final int page;
   final bool hasMore;
 }
 
-class ProductsProvider extends Notifier<ProductsState> {
-  @override
-  ProductsState build() => ProductsState.initial();
+class ProductsProvider extends StateNotifier<ProductsState> {
+  ProductsProvider({required this._productsRepository, required this._localPaginationUtil, ProductsState? state})
+    : super(state ?? ProductsState.initial());
+
+  final IProductsRepository _productsRepository;
+  final LocalPaginationUtil _localPaginationUtil;
 
   void load() async {
     try {
@@ -68,29 +61,13 @@ class ProductsProvider extends Notifier<ProductsState> {
 
       state = ProductsState.inProgress();
 
-      /// блять/бля/бла
-      /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-      final productsRepository = ref.read(productsRepositoryImpl);
+      final products = await _productsRepository.products(page: 1, perPage: 20);
 
-      final localPaginationUtil = ref.read(localPaginationUtilProvider);
+      final page = _localPaginationUtil.checkIsListHasMorePageInt(list: products, page: 1);
 
-      final products = await productsRepository.products(page: 1, perPage: 20);
+      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(list: products, limitInPage: 20);
 
-      final page = localPaginationUtil.checkIsListHasMorePageInt(
-        list: products,
-        page: 1,
-      );
-
-      final hasMore = localPaginationUtil.checkIsListHasMorePageBool(
-        list: products,
-        limitInPage: 20,
-      );
-
-      state = ProductsState.completed(
-        products: products,
-        page: page,
-        hasMore: hasMore,
-      );
+      state = ProductsState.completed(products: products, page: page, hasMore: hasMore);
     } catch (error) {
       state = ProductsState.error(error: error);
     }
@@ -102,36 +79,15 @@ class ProductsProvider extends Notifier<ProductsState> {
       final completedState = state as Products$CompletedState;
       if (!completedState.hasMore) return;
 
-      /// блять/бля/бла
-      /// Even if I could access the global variable, I would still be violating the rules of dependency injection.
-      /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-      final productsRepository = ref.read(productsRepositoryImpl);
+      final products = await _productsRepository.products(page: completedState.page, perPage: 20);
 
-      final localPaginationUtil = ref.read(localPaginationUtilProvider);
+      final page = _localPaginationUtil.checkIsListHasMorePageInt(list: products, page: completedState.page);
 
-      final products = await productsRepository.products(
-        page: completedState.page,
-        perPage: 20,
-      );
+      final hasMore = _localPaginationUtil.checkIsListHasMorePageBool(list: products, limitInPage: 20);
 
-      final page = localPaginationUtil.checkIsListHasMorePageInt(
-        list: products,
-        page: completedState.page,
-      );
+      final currentProducts = List.of(completedState.products)..addAll(products);
 
-      final hasMore = localPaginationUtil.checkIsListHasMorePageBool(
-        list: products,
-        limitInPage: 20,
-      );
-
-      final currentProducts = List.of(completedState.products)
-        ..addAll(products);
-
-      state = ProductsState.completed(
-        products: currentProducts,
-        page: page,
-        hasMore: hasMore,
-      );
+      state = ProductsState.completed(products: currentProducts, page: page, hasMore: hasMore);
     } catch (error) {
       state = ProductsState.error(error: error);
     }

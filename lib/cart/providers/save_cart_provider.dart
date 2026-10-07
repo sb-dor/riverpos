@@ -1,17 +1,12 @@
-import 'package:riverpod/riverpod.dart';
+import 'package:riverpod/legacy.dart';
 import 'package:riverpos/cart/data/cart_repository.dart';
 import 'package:riverpos/initialization/models/dependencies.dart';
 import 'package:riverpos/orders/models/order.dart';
 
-/// I could create this globally with no riverpod's provider (simple global variable)
-/// but Even if I could access the global variable, I would still be violating the rules of dependency injection.
-/// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-final cartRepositoryImpl = Provider<ICartRepository>((ref) {
+final saveCartProvider = StateNotifierProvider<SaveCartProvider, SaveCartState>((ref) {
   final dependencies = ref.read(dependenciesProvider);
-  return Cart$LocalRepositoryImpl(appDatabase: dependencies.appDatabase);
+  return SaveCartProvider(cartRepository: Cart$LocalRepositoryImpl(appDatabase: dependencies.appDatabase));
 });
-
-final saveCartProvider = NotifierProvider(SaveCartProvider.new);
 
 sealed class SaveCartState {
   const SaveCartState();
@@ -43,22 +38,18 @@ class SaveCart$CompletedState extends SaveCartState {
   const SaveCart$CompletedState();
 }
 
-class SaveCartProvider extends Notifier<SaveCartState> {
-  @override
-  SaveCartState build() => SaveCartState.initial();
+class SaveCartProvider extends StateNotifier<SaveCartState> {
+  SaveCartProvider({required this._cartRepository, SaveCartState? state}) : super(state ?? SaveCartState.initial());
+
+  final ICartRepository _cartRepository;
 
   void save(Order order) async {
     try {
       if (state is SaveCart$InProgressState) return;
 
-      /// блять/бля/бла
-      /// Even if I could access the global variable, I would still be violating the rules of dependency injection.
-      /// https://en.wikipedia.org/wiki/Coupling_(computer_programming)
-      final cartRepository = ref.read(cartRepositoryImpl);
-
       state = SaveCartState.inProgress();
 
-      final save = await cartRepository.save(order);
+      final save = await _cartRepository.save(order);
 
       if (save) {
         state = SaveCartState.completed();
